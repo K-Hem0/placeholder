@@ -99,7 +99,7 @@ export function EditorHelpPopover({ variant = 'default' }: EditorHelpPopoverProp
                   </button>
                 </div>
 
-                <div className="max-h-[min(65vh,520px)] space-y-6 overflow-y-auto pr-1 text-[13px] leading-relaxed text-slate-700 dark:text-slate-400/95">
+                <div className="max-h-[min(65dvh,520px)] space-y-6 overflow-y-auto pr-1 text-[13px] leading-relaxed text-slate-700 dark:text-slate-400/95">
                   <HelpBlock title="Internal links">
                     <p>
                       Type{' '}

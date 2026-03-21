@@ -8,7 +8,7 @@ import type {
 } from '../types'
 import { applyThemePreference } from '../lib/theme'
 import { applyColorScheme, isColorSchemeId } from '../lib/colorScheme'
-import { isNoteTemplateId } from '../lib/templateRegistry'
+import { migrateLegacyNoteTemplateId } from '../lib/templateRegistry'
 import {
   DEFAULT_LEFT_PANE_PX,
   DEFAULT_RIGHT_PANE_PX,
@@ -121,7 +121,10 @@ function sanitizeSettings(
   if (typeof parsed.distractionFree === 'boolean')
     o.distractionFree = parsed.distractionFree
   const dt = parsed.defaultTemplate
-  if (typeof dt === 'string' && isNoteTemplateId(dt)) o.defaultTemplate = dt
+  if (typeof dt === 'string') {
+    const migrated = migrateLegacyNoteTemplateId(dt)
+    if (migrated) o.defaultTemplate = migrated
+  }
   const sn = parsed.sortNotes
   if (sn === 'updated' || sn === 'created' || sn === 'title')
     o.sortNotes = sn

@@ -251,7 +251,7 @@ export function AppShell({ left, editor, right }: AppShellProps) {
   return (
     <div
       className={cn(
-        'flex h-screen min-h-0 w-full flex-col font-sans antialiased',
+        'flex h-full min-h-0 w-full flex-1 flex-col font-sans antialiased',
         'bg-[var(--app-bg)] text-slate-800',
         'selection:bg-sky-200/70 selection:text-slate-900',
         'dark:text-slate-200/95 dark:selection:bg-sky-500/20 dark:selection:text-slate-50'
@@ -261,8 +261,9 @@ export function AppShell({ left, editor, right }: AppShellProps) {
         <header
           className={cn(
             'relative z-30 flex h-10 shrink-0 items-center justify-end border-b px-3',
-            'border-[color:var(--app-sidebar-border)] bg-[var(--app-main)]/95 backdrop-blur-sm',
-            'dark:border-white/[0.05]'
+            'border-[color:var(--app-chrome-border)] bg-[var(--app-chrome)] backdrop-blur-sm',
+            'shadow-[0_1px_0_rgba(15,23,42,0.05),0_12px_32px_-20px_rgba(15,23,42,0.1)]',
+            'dark:shadow-[0_1px_0_rgba(0,0,0,0.4),0_12px_36px_-22px_rgba(0,0,0,0.5)]'
           )}
         >
           <button
@@ -281,11 +282,17 @@ export function AppShell({ left, editor, right }: AppShellProps) {
             Exit focus
           </button>
         </header>
-      ) : null}
+      ) : (
+        <WorkspaceTopChrome />
+      )}
 
       <div
         ref={shellRef}
-        className="relative flex min-h-0 flex-1 flex-row overflow-hidden"
+        className={cn(
+          'relative flex min-h-0 flex-1 flex-row overflow-hidden',
+          !distractionFree &&
+            'shadow-[inset_0_1px_0_rgba(255,255,255,0.48)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.035)]'
+        )}
       >
         {!distractionFree ? (
           <>
@@ -321,7 +328,7 @@ export function AppShell({ left, editor, right }: AppShellProps) {
 
             <main
               className={cn(
-                'relative min-h-0 min-w-0 flex-1',
+                'relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden',
                 'bg-[var(--app-main)]'
               )}
             >
@@ -378,7 +385,7 @@ export function AppShell({ left, editor, right }: AppShellProps) {
         ) : (
           <main
             className={cn(
-              'relative min-h-0 min-w-0 flex-1',
+              'relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden',
               'bg-[var(--app-main)]',
               'opacity-[0.99]'
             )}
@@ -390,6 +397,41 @@ export function AppShell({ left, editor, right }: AppShellProps) {
 
       <SettingsModal />
     </div>
+  )
+}
+
+function WorkspaceTopChrome() {
+  return (
+    <header
+      className={cn(
+        'relative z-30 flex h-9 shrink-0 items-stretch',
+        'border-b border-[color:var(--app-chrome-border)] bg-[var(--app-chrome)]',
+        'shadow-[0_1px_0_rgba(15,23,42,0.05),0_12px_32px_-20px_rgba(15,23,42,0.1)]',
+        'dark:shadow-[0_1px_0_rgba(0,0,0,0.45),0_12px_36px_-22px_rgba(0,0,0,0.55)]'
+      )}
+      role="banner"
+      aria-label="Workspace"
+    >
+      <div
+        className={cn(
+          'flex w-9 shrink-0 items-center justify-center border-r',
+          'border-[color:var(--app-sidebar-border)] bg-[var(--app-rail)]',
+          'shadow-[inset_0_1px_0_rgba(255,255,255,0.32)]',
+          'dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]'
+        )}
+        aria-hidden
+      />
+      <div className="flex min-h-0 min-w-0 flex-1 items-center px-3">
+        <span
+          className={cn(
+            'truncate text-[11px] font-medium tracking-[0.1em] text-slate-400/90 uppercase',
+            'dark:text-slate-500/85'
+          )}
+        >
+          Workspace
+        </span>
+      </div>
+    </header>
   )
 }
 

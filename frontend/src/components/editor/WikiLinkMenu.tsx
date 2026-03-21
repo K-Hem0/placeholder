@@ -116,7 +116,7 @@ export function WikiLinkMenu(props: WikiLinkMenuProps) {
           )}
         </p>
       </div>
-      <div className="max-h-[min(240px,38vh)] overflow-y-auto overscroll-contain px-0.5 py-0.5">
+      <div className="max-h-[min(240px,38dvh)] overflow-y-auto overscroll-contain px-0.5 py-0.5">
         {safeItems.length === 0 ? (
           <div className="px-2 py-3 text-center text-[12px] text-slate-500 dark:text-slate-500/90">
             {query.trim() ? (

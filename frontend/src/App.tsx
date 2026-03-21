@@ -4,6 +4,7 @@ import { NoteList } from './components/layout/NoteList'
 import { Sidebar } from './components/layout/Sidebar'
 import { AppShell } from './components/layout/AppShell'
 import { loadPersistedState, savePersistedState } from './lib/storage'
+import { AUTOSAVE_TO_DISK_MS } from './lib/versionHistoryPolicy'
 import { useAppStore } from './store'
 import { useSettingsStore } from './store/useSettingsStore'
 import {
@@ -18,6 +19,9 @@ export default function App() {
   const notes = useAppStore((s) => s.notes)
   const versionsByNoteId = useAppStore((s) => s.versionsByNoteId)
   const skipSaveRef = useRef(true)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const latestRef = useRef({ notes, versionsByNoteId })
+  latestRef.current = { notes, versionsByNoteId }
   const themePreference = useSettingsStore((s) => s.themePreference)
   const colorScheme = useSettingsStore((s) => s.colorScheme)
 
@@ -35,8 +39,34 @@ export default function App() {
       skipSaveRef.current = false
       return
     }
-    savePersistedState({ notes, versionsByNoteId })
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(() => {
+      saveTimerRef.current = null
+      const { notes: n, versionsByNoteId: v } = latestRef.current
+      savePersistedState({ notes: n, versionsByNoteId: v })
+    }, AUTOSAVE_TO_DISK_MS)
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    }
   }, [notes, versionsByNoteId])
+
+  useEffect(() => {
+    const flush = () => {
+      const { notes: n, versionsByNoteId: v } = latestRef.current
+      savePersistedState({ notes: n, versionsByNoteId: v })
+    }
+    const onHide = () => {
+      if (document.visibilityState === 'hidden') flush()
+    }
+    window.addEventListener('pagehide', flush)
+    window.addEventListener('beforeunload', flush)
+    document.addEventListener('visibilitychange', onHide)
+    return () => {
+      window.removeEventListener('pagehide', flush)
+      window.removeEventListener('beforeunload', flush)
+      document.removeEventListener('visibilitychange', onHide)
+    }
+  }, [])
 
   useEffect(() => {
     applyThemePreference(themePreference)

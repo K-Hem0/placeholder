@@ -2,6 +2,7 @@ import type { Editor } from '@tiptap/core'
 import { useEditorState } from '@tiptap/react'
 import type { ReactNode } from 'react'
 import { cn } from '../../lib/cn'
+import { modSymbol } from '../../lib/platformKeys'
 import { promptAndSetLink } from '../../lib/promptLinkEditor'
 import type { SelectMenuOption } from '../ui/SelectMenu'
 import { ToolbarButton } from './toolbar/ToolbarButton'
@@ -64,15 +65,17 @@ const STYLE_OPTIONS: SelectMenuOption[] = [
   },
 ]
 
-const FONT_SIZE_OPTIONS: SelectMenuOption[] = [
-  { value: '', label: 'Size' },
-  { value: '12px', label: '12' },
-  { value: '14px', label: '14' },
-  { value: '16px', label: '16' },
-  { value: '18px', label: '18' },
-  { value: '20px', label: '20' },
-  { value: '24px', label: '24' },
-]
+/** 1–72px; document default is 12px (unset inline font size). */
+const FONT_SIZE_OPTIONS: SelectMenuOption[] = Array.from({ length: 72 }, (_, i) => {
+  const px = i + 1
+  return { value: `${px}px`, label: String(px) }
+})
+
+function displayFontSizeSelectValue(fontSize: string): string {
+  if (!fontSize || fontSize === '12px') return '12px'
+  if (FONT_SIZE_OPTIONS.some((o) => o.value === fontSize)) return fontSize
+  return '12px'
+}
 
 type BlockStyle =
   | 'paragraph'
@@ -216,7 +219,7 @@ export function EditorToolbar({ editor, className, rightSlot }: EditorToolbarPro
 
   const onFontSize = (value: string) => {
     const chain = editor.chain().focus()
-    if (!value) chain.unsetFontSize().run()
+    if (!value || value === '12px') chain.unsetFontSize().run()
     else chain.setFontSize(value).run()
   }
 
@@ -247,11 +250,8 @@ export function EditorToolbar({ editor, className, rightSlot }: EditorToolbarPro
             label="Font size"
             title="Font size"
             narrow
-            value={
-              FONT_SIZE_OPTIONS.some((o) => o.value === state.fontSize)
-                ? state.fontSize
-                : ''
-            }
+            searchable
+            value={displayFontSizeSelectValue(state.fontSize)}
             onChange={(v) => onFontSize(v)}
             options={FONT_SIZE_OPTIONS}
           />
@@ -261,21 +261,21 @@ export function EditorToolbar({ editor, className, rightSlot }: EditorToolbarPro
 
         <ToolbarGroup>
           <ToolbarButton
-            title="Bold (Ctrl+B)"
+            title={`Bold (${modSymbol()}+B)`}
             active={state.isBold}
             onClick={() => editor.chain().focus().toggleBold().run()}
           >
             <span className="text-[12px] font-semibold">B</span>
           </ToolbarButton>
           <ToolbarButton
-            title="Italic (Ctrl+I)"
+            title={`Italic (${modSymbol()}+I)`}
             active={state.isItalic}
             onClick={() => editor.chain().focus().toggleItalic().run()}
           >
             <span className="text-[12px] italic">I</span>
           </ToolbarButton>
           <ToolbarButton
-            title="Underline (Ctrl+U)"
+            title={`Underline (${modSymbol()}+U)`}
             active={state.isUnderline}
             onClick={() => editor.chain().focus().toggleUnderline().run()}
           >

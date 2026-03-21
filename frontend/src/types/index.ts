@@ -3,19 +3,25 @@ export type SidebarTab = 'literature' | 'tools' | 'backlinks' | 'history'
 export type NoteVersion = {
   id: string
   createdAt: string
-  /** TipTap HTML snapshot */
+  /** Rich-text HTML or raw LaTeX, matching the parent note’s `editorMode` when recorded */
   content: string
   /** Note title when this snapshot was recorded (best-effort). */
   snapshotTitle?: string
 }
 
+/** How the main note body is edited and interpreted. */
+export type EditorMode = 'rich' | 'latex'
+
 export type Note = {
   id: string
   title: string
   content: string
+  /** Rich-text HTML or raw LaTeX source, depending on `editorMode`. */
   tags: string[]
   /** Folder / collection label; empty string = inbox / uncategorized */
   folder: string
+  /** Defaults to `rich` when missing (older persisted data). */
+  editorMode?: EditorMode
   createdAt: string
   updatedAt: string
 }
@@ -32,20 +38,9 @@ export type Reference = {
 
 export type NoteTemplateId =
   | 'blank'
-  | 'daily-note'
-  | 'lecture-notes'
-  | 'literature'
-  | 'research-log'
-  | 'annotated-bibliography'
-  | 'essay-outline'
-  | 'reflection'
-  | 'meeting-notes'
-  | 'coding-notes'
-  | 'bug-log'
-  | 'math-proof'
-  | 'latex-article'
-  | 'latex-homework'
-  | 'latex-proof'
+  | 'daily-lecture'
+  | 'research-paper'
+  | 'blog-post'
 
 export type NoteSort = 'updated' | 'created' | 'title'
 

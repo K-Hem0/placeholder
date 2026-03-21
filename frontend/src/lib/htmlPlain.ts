@@ -13,6 +13,14 @@ export function htmlToPlainText(html: string): string {
   return (d.textContent || '').replace(/\s+/g, ' ').trim()
 }
 
+export function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
 export type LineDiffRow = { kind: 'same' | 'add' | 'rem'; text: string }
 
 /** Simple line-level diff for short previews (readable, not a full Myers diff). */

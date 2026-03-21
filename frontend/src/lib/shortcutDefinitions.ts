@@ -1,3 +1,7 @@
+/**
+ * Keyboard shortcut list for Settings / Help. Labels: `platformKeys.ts` (Ctrl vs ⌘).
+ * Physical keys and matchers: `keyboardShortcuts.ts`; handlers: `useKeyboardShortcuts.ts`.
+ */
 import {
   formatShortcut,
   isApplePlatform,
@@ -49,17 +53,17 @@ export function getShortcutDefinitions(): ShortcutDef[] {
     },
     {
       id: 'h1',
-      action: 'Heading 1',
+      action: 'Heading 1 (in editor)',
       keysLabel: shortcutHeading(1),
     },
     {
       id: 'h2',
-      action: 'Heading 2',
+      action: 'Heading 2 (in editor)',
       keysLabel: shortcutHeading(2),
     },
     {
       id: 'h3',
-      action: 'Heading 3',
+      action: 'Heading 3 (in editor)',
       keysLabel: shortcutHeading(3),
     },
     {

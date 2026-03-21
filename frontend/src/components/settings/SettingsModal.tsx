@@ -68,7 +68,7 @@ export function SettingsModal() {
           </button>
         </div>
 
-        <div className="max-h-[min(70vh,560px)] space-y-8 overflow-y-auto pr-1">
+        <div className="max-h-[min(70dvh,560px)] space-y-8 overflow-y-auto pr-1">
           <AppearanceSection />
           <EditorSection />
           <NotesSection />
@@ -249,7 +249,7 @@ function KeyboardShortcutsSection() {
       <SectionTitle>Keyboard shortcuts</SectionTitle>
       <div className="rounded-xl border border-slate-200/60 bg-white/50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
         <p className="mb-4 text-[12px] leading-relaxed text-slate-500 dark:text-slate-500/85">
-          Shortcuts use {modSymbol()} on this device
+          The primary modifier is {modSymbol()}
           {isApplePlatform() ? ' (Command)' : ' (Control)'}. Formatting shortcuts
           apply while the cursor is in the editor.
         </p>

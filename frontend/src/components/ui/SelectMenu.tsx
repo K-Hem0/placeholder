@@ -299,8 +299,8 @@ export function SelectMenu({
           isToolbarCompact ? toolbarMenuPanelClass : selectMenuPanelClass,
           searchable ? 'px-0 pb-1.5 pt-0' : isToolbarCompact ? 'px-0.5 py-0.5' : 'px-1 py-1.5',
           isToolbarCompact
-            ? 'max-h-[min(260px,42vh)] overflow-y-auto overscroll-contain'
-            : 'max-h-[min(360px,56vh)] overflow-y-auto overscroll-contain',
+            ? 'max-h-[min(260px,42dvh)] overflow-y-auto overscroll-contain'
+            : 'max-h-[min(360px,56dvh)] overflow-y-auto overscroll-contain',
           'origin-top will-change-transform',
           isToolbarCompact
             ? 'transition-[opacity,transform] duration-150 ease-out'

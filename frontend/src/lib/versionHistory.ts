@@ -1,4 +1,5 @@
 import type { NoteVersion } from '../types'
+import { isNearDuplicateOfLatest } from './versionHistoryPolicy'
 
 const MAX_VERSIONS_PER_NOTE = 40
 
@@ -10,6 +11,10 @@ export function appendVersion(
 ): NoteVersion[] {
   const list = existing ?? []
   if (content === previousContent) return list
+  const last = list[list.length - 1]
+  if (isNearDuplicateOfLatest(last?.content, previousContent)) {
+    return list
+  }
   const snap: NoteVersion = {
     id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),

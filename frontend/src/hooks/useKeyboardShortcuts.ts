@@ -3,23 +3,28 @@ import { useAppStore } from '../store'
 import { useSettingsStore } from '../store/useSettingsStore'
 import { useUiStore } from '../store/useUiStore'
 import { getEditorForShortcuts } from '../lib/editorShortcutBridge'
-import { isApplePlatform } from '../lib/platformKeys'
+import {
+  GlobalKeyCode,
+  isPrimaryModifier,
+  matchNewNote,
+  matchSettings,
+  matchTemplatePicker,
+} from '../lib/keyboardShortcuts'
 
-function isPrimaryMod(e: KeyboardEvent): boolean {
-  return isApplePlatform() ? e.metaKey : e.ctrlKey
+/**
+ * Desktop-first shortcuts (Ctrl/Cmd). Physical keys and labels stay aligned via
+ * `keyboardShortcuts.ts`, `platformKeys.ts`, and `shortcutDefinitions.ts`.
+ *
+ * Search fields and similar: skip global shortcuts so typing behaves predictably.
+ */
+function isShortcutIgnoredTarget(target: EventTarget | null): boolean {
+  return target instanceof HTMLElement && !!target.closest('[data-shortcut-ignore]')
 }
 
 function targetInProseMirror(target: EventTarget | null): boolean {
   return (
     target instanceof HTMLElement && !!target.closest?.('.ProseMirror')
   )
-}
-
-/**
- * Search fields and similar: skip global chrome shortcuts so typing / browser defaults behave predictably.
- */
-function isShortcutIgnoredTarget(target: EventTarget | null): boolean {
-  return target instanceof HTMLElement && !!target.closest('[data-shortcut-ignore]')
 }
 
 /**
@@ -30,7 +35,7 @@ function shouldLetEditorHandle(
   e: KeyboardEvent,
   inProse: boolean
 ): boolean {
-  if (!inProse || !isPrimaryMod(e)) return false
+  if (!inProse || !isPrimaryModifier(e)) return false
   const code = e.code
   if (code === 'KeyB' || code === 'KeyI' || code === 'KeyU') return !e.shiftKey
   if (code === 'KeyK' && !e.shiftKey) return true
@@ -74,16 +79,23 @@ export function useKeyboardShortcuts() {
       const inProse = targetInProseMirror(e.target)
       const ignored = isShortcutIgnoredTarget(e.target)
 
-      if (isPrimaryMod(e) && inProse && !ignored) {
+      if (isPrimaryModifier(e) && inProse && !ignored) {
         const code = e.code
         if (
-          (code === 'Digit1' || code === 'Digit2' || code === 'Digit3') &&
+          (code === GlobalKeyCode.Heading1 ||
+            code === GlobalKeyCode.Heading2 ||
+            code === GlobalKeyCode.Heading3) &&
           !e.shiftKey &&
           !e.altKey
         ) {
           const ed = getEditorForShortcuts()
           if (!ed) return
-          const level = code === 'Digit1' ? 1 : code === 'Digit2' ? 2 : 3
+          const level =
+            code === GlobalKeyCode.Heading1
+              ? 1
+              : code === GlobalKeyCode.Heading2
+                ? 2
+                : 3
           e.preventDefault()
           e.stopPropagation()
           ed.chain().focus().toggleHeading({ level }).run()
@@ -91,14 +103,13 @@ export function useKeyboardShortcuts() {
         }
       }
 
-      if (!isPrimaryMod(e)) return
+      if (!isPrimaryModifier(e)) return
 
       if (shouldLetEditorHandle(e, inProse)) return
 
-      const shift = e.shiftKey
       const code = e.code
 
-      if (code === 'KeyN' && !shift) {
+      if (matchNewNote(e)) {
         if (ignored) return
         e.preventDefault()
         e.stopPropagation()
@@ -107,7 +118,7 @@ export function useKeyboardShortcuts() {
         return
       }
 
-      if (code === 'KeyN' && shift) {
+      if (matchTemplatePicker(e)) {
         if (ignored) return
         e.preventDefault()
         e.stopPropagation()
@@ -115,7 +126,7 @@ export function useKeyboardShortcuts() {
         return
       }
 
-      if (code === 'Comma' && !shift) {
+      if (matchSettings(e)) {
         if (ignored) return
         e.preventDefault()
         e.stopPropagation()
@@ -123,7 +134,12 @@ export function useKeyboardShortcuts() {
         return
       }
 
-      if ((code === 'Backquote' || code === 'Period') && !shift && !e.altKey) {
+      if (
+        (code === GlobalKeyCode.ToggleLeftSidebarA ||
+          code === GlobalKeyCode.ToggleLeftSidebarB) &&
+        !e.shiftKey &&
+        !e.altKey
+      ) {
         if (ignored) return
         e.preventDefault()
         e.stopPropagation()
@@ -134,7 +150,7 @@ export function useKeyboardShortcuts() {
         return
       }
 
-      if (code === 'Backslash' && !shift) {
+      if (code === GlobalKeyCode.ToggleRightSidebar && !e.shiftKey) {
         if (ignored) return
         e.preventDefault()
         e.stopPropagation()
@@ -145,7 +161,11 @@ export function useKeyboardShortcuts() {
         return
       }
 
-      if (code === 'KeyF' && shift) {
+      if (
+        code === GlobalKeyCode.FocusMode &&
+        e.shiftKey &&
+        !e.altKey
+      ) {
         if (ignored) return
         e.preventDefault()
         e.stopPropagation()

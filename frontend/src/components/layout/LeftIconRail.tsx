@@ -1,11 +1,11 @@
 import { useSettingsStore } from '../../store/useSettingsStore'
 import { cn } from '../../lib/cn'
-import type { ThemePreference } from '../../types'
 import { EditorHelpPopover } from '../editor/EditorHelpPopover'
 
 const railBtn = cn(
-  'flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition',
+  'flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] transition',
   'text-slate-500 hover:bg-slate-200/65 hover:text-slate-800',
+  'active:bg-slate-200/75 dark:active:bg-white/[0.09]',
   'focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/25',
   'dark:text-slate-500 dark:hover:bg-white/[0.07] dark:hover:text-slate-200',
   'dark:focus-visible:ring-sky-400/20'
@@ -15,22 +15,14 @@ export function LeftIconRail() {
   const leftCollapsed = useSettingsStore((s) => s.leftSidebarCollapsed)
   const setLeftCollapsed = useSettingsStore((s) => s.setLeftSidebarCollapsed)
   const setSettingsOpen = useSettingsStore((s) => s.setSettingsOpen)
-  const themePreference = useSettingsStore((s) => s.themePreference)
-  const setThemePreference = useSettingsStore((s) => s.setThemePreference)
-
-  const cycleTheme = () => {
-    const order: ThemePreference[] = ['light', 'dark', 'system']
-    const i = order.indexOf(themePreference)
-    const next = order[(i + 1) % order.length]!
-    setThemePreference(next)
-  }
 
   return (
     <nav
       className={cn(
         'flex h-full min-h-0 w-9 shrink-0 flex-col border-r',
-        'border-slate-200/35 bg-[#e4e2dc]/95',
-        'dark:border-white/[0.05] dark:bg-[#0b0c10]/98'
+        'border-[color:var(--app-sidebar-border)] bg-[var(--app-rail)]',
+        'shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]',
+        'dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.035)]'
       )}
       aria-label="Workspace"
     >
@@ -72,25 +64,10 @@ export function LeftIconRail() {
         >
           <SettingsGearIcon />
         </button>
-        <button
-          type="button"
-          className={railBtn}
-          onClick={cycleTheme}
-          aria-label={`Theme: ${themePreference}. Click to cycle appearance.`}
-          title={`Appearance: ${themePreference} — click to cycle`}
-        >
-          <ThemeCycleIcon preference={themePreference} />
-        </button>
         <EditorHelpPopover variant="rail" />
       </div>
     </nav>
   )
-}
-
-function ThemeCycleIcon({ preference }: { preference: ThemePreference }) {
-  if (preference === 'light') return <SunIcon />
-  if (preference === 'dark') return <MoonIcon />
-  return <MonitorIcon />
 }
 
 function PanelLeftIcon() {
@@ -158,51 +135,3 @@ function SettingsGearIcon() {
     </svg>
   )
 }
-
-function SunIcon() {
-  return (
-    <svg
-      className="h-4 w-4"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      aria-hidden
-    >
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-    </svg>
-  )
-}
-
-function MoonIcon() {
-  return (
-    <svg
-      className="h-4 w-4"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      aria-hidden
-    >
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-  )
-}
-
-function MonitorIcon() {
-  return (
-    <svg
-      className="h-4 w-4"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      aria-hidden
-    >
-      <rect x="2" y="3" width="20" height="14" rx="2" />
-      <path d="M8 21h8M12 17v4" />
-    </svg>
-  )
-}
-

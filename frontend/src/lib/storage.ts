@@ -1,9 +1,14 @@
-import type { Note, NoteVersion } from '../types'
+import type { EditorMode, Note, NoteVersion } from '../types'
+import { normalizePersistedNote } from './noteMigration'
 import {
   LEGACY_NOTES_KEY,
   STORAGE_ROOT_KEY,
   type PersistedAppStateV1,
 } from './schema'
+
+function isEditorMode(v: unknown): v is EditorMode {
+  return v === 'rich' || v === 'latex'
+}
 
 function isNote(value: unknown): value is Note {
   if (value === null || typeof value !== 'object') return false
@@ -16,7 +21,8 @@ function isNote(value: unknown): value is Note {
     o.tags.every((t) => typeof t === 'string') &&
     typeof o.folder === 'string' &&
     typeof o.createdAt === 'string' &&
-    typeof o.updatedAt === 'string'
+    typeof o.updatedAt === 'string' &&
+    (o.editorMode === undefined || isEditorMode(o.editorMode))
   )
 }
 
@@ -68,7 +74,7 @@ export function loadPersistedState(): {
       const parsed: unknown = JSON.parse(raw)
       if (isPersistedV1(parsed)) {
         return {
-          notes: parsed.notes,
+          notes: parsed.notes.map(normalizePersistedNote),
           versionsByNoteId: parsed.versionsByNoteId,
         }
       }
@@ -79,7 +85,10 @@ export function loadPersistedState(): {
 
   const legacy = loadLegacyNotesOnly()
   if (legacy.length > 0) {
-    return { notes: legacy, versionsByNoteId: {} }
+    return {
+      notes: legacy.map(normalizePersistedNote),
+      versionsByNoteId: {},
+    }
   }
 
   return { notes: [], versionsByNoteId: {} }
@@ -134,7 +143,7 @@ export function parseImportedStateJson(
       (parsed as { notes: unknown[] }).notes.every(isNote)
     ) {
       return {
-        notes: (parsed as { notes: Note[] }).notes,
+        notes: (parsed as { notes: Note[] }).notes.map(normalizePersistedNote),
         versionsByNoteId:
           typeof (parsed as { versionsByNoteId?: unknown }).versionsByNoteId ===
             'object' &&

@@ -24,7 +24,7 @@ export function Sidebar() {
     <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
       <div
         className={cn(
-          'flex min-w-0 shrink-0 items-start justify-between gap-2 px-4 pb-5 pt-7',
+          'flex min-w-0 shrink-0 items-start justify-between gap-2 border-b border-[color:var(--app-sidebar-border)]/75 px-4 pb-5 pt-7',
           compactMode && 'px-3 pb-4 pt-6'
         )}
       >
@@ -72,7 +72,7 @@ export function Sidebar() {
           <PanelRightCollapseIcon />
         </button>
       </div>
-      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-12">
+      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-[calc(3rem+env(safe-area-inset-bottom,0px))]">
         <div
           id="sidebar-panel-literature"
           role="tabpanel"

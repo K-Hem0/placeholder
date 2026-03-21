@@ -5,6 +5,7 @@ import { useSettingsStore } from '../../store/useSettingsStore'
 import { useUiStore } from '../../store/useUiStore'
 import { sortNotesList } from '../../lib/sortNotes'
 import type { NoteTemplateId } from '../../types'
+import type { NoteTemplateOptions } from '../../lib/templates'
 import { cn } from '../../lib/cn'
 import { SelectMenu } from '../ui/SelectMenu'
 import { selectMenuItemClass, selectMenuPanelClass } from '../ui/selectMenuStyles'
@@ -35,6 +36,7 @@ export function NoteList() {
   } | null>(null)
   const templatePickerOpen = useUiStore((s) => s.templatePickerOpen)
   const setTemplatePickerOpen = useUiStore((s) => s.setTemplatePickerOpen)
+  const requestEditorPaneFocus = useUiStore((s) => s.requestEditorPaneFocus)
   const newNoteSplitRef = useRef<HTMLDivElement>(null)
 
   const folders = useMemo(() => {
@@ -98,8 +100,8 @@ export function NoteList() {
   const padTop = compactMode ? 'pt-5' : 'pt-7'
 
   const onTemplatePick = useCallback(
-    (id: NoteTemplateId) => {
-      addNoteFromTemplate(id)
+    (id: NoteTemplateId, options?: NoteTemplateOptions) => {
+      addNoteFromTemplate(id, options)
     },
     [addNoteFromTemplate]
   )
@@ -108,7 +110,7 @@ export function NoteList() {
     <div className="flex h-full min-h-0 flex-col">
       <header
         className={cn(
-          'flex shrink-0 flex-col gap-2 px-3 pb-2.5 sm:px-3.5',
+          'flex shrink-0 flex-col gap-2 border-b border-[color:var(--app-sidebar-border)]/75 px-3 pb-2.5 sm:px-3.5',
           padTop,
           compactMode && 'px-2.5'
         )}
@@ -124,7 +126,10 @@ export function NoteList() {
         >
           <button
             type="button"
-            onClick={() => addNote()}
+            onClick={() => {
+              addNote()
+              requestEditorPaneFocus()
+            }}
             className={cn(
               'min-w-0 flex-1 px-3 py-1.5 text-left text-[12px] font-semibold text-slate-800 transition',
               'hover:bg-slate-100/90 hover:text-slate-950',
@@ -180,8 +185,9 @@ export function NoteList() {
 
       <ul
         className={cn(
-          'min-h-0 flex-1 space-y-0.5 overflow-y-auto px-3 pb-10',
-          compactMode && 'space-y-0 px-2.5 pb-8'
+          'min-h-0 flex-1 space-y-0.5 overflow-y-auto px-3 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))]',
+          compactMode &&
+            'space-y-0 px-2.5 pb-[calc(2rem+env(safe-area-inset-bottom,0px))]'
         )}
         role="list"
         aria-label="Notes"
@@ -219,11 +225,18 @@ export function NoteList() {
                     <span className="line-clamp-2 break-words">
                       {noteLabel(note.title)}
                     </span>
-                    {note.folder.trim() ? (
-                      <span className="mt-0.5 block text-[11px] font-normal text-slate-500/90 dark:text-slate-600/90">
-                        {note.folder.trim()}
-                      </span>
-                    ) : null}
+                    <span className="mt-0.5 flex flex-wrap items-center gap-1.5">
+                      {note.editorMode === 'latex' ? (
+                        <span className="inline-block rounded-md border border-violet-200/55 bg-violet-50/90 px-1 py-px text-[9px] font-semibold uppercase tracking-wide text-violet-800/90 dark:border-violet-500/25 dark:bg-violet-950/40 dark:text-violet-300/95">
+                          LaTeX
+                        </span>
+                      ) : null}
+                      {note.folder.trim() ? (
+                        <span className="text-[11px] font-normal text-slate-500/90 dark:text-slate-600/90">
+                          {note.folder.trim()}
+                        </span>
+                      ) : null}
+                    </span>
                   </button>
                   <button
                     type="button"

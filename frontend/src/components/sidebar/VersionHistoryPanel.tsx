@@ -48,14 +48,15 @@ export function VersionHistoryPanel() {
   if (versions.length === 0) {
     return (
       <p className="text-[12px] leading-relaxed text-slate-500 dark:text-slate-600/90">
-        Snapshots appear after you pause editing for a couple of seconds.
+        Snapshots are created when you pause (~15s), switch notes, leave the window, or
+        every few minutes while editing—only when changes are substantial enough to matter.
       </p>
     )
   }
 
   return (
     <>
-      <ul className="max-h-[min(50vh,360px)] space-y-1 overflow-y-auto pr-0.5" role="list">
+      <ul className="max-h-[min(50dvh,360px)] space-y-1 overflow-y-auto pr-0.5" role="list">
         {versions.map((v) => (
           <li
             key={v.id}
@@ -96,6 +97,7 @@ export function VersionHistoryPanel() {
         version={previewVersion}
         currentContentHtml={currentNote?.content ?? ''}
         currentTitle={currentNote?.title ?? ''}
+        editorMode={currentNote?.editorMode ?? 'rich'}
         onConfirmRestore={(versionId) => {
           if (currentNoteId) {
             restoreNoteVersion(currentNoteId, versionId)

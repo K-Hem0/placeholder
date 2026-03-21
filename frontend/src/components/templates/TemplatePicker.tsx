@@ -29,13 +29,17 @@ import {
   type TemplateUsageState,
 } from '../../lib/templateUsage'
 import type { NoteTemplateId } from '../../types'
+import type {
+  NoteTemplateOptions,
+  ResearchPaperVariant,
+} from '../../lib/templates'
 import { selectMenuItemClass, selectMenuPanelClass } from '../ui/selectMenuStyles'
 
 type TemplatePickerProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   anchorRef: React.RefObject<HTMLElement | null>
-  onSelectTemplate: (id: NoteTemplateId) => void
+  onSelectTemplate: (id: NoteTemplateId, options?: NoteTemplateOptions) => void
 }
 
 export function TemplatePicker({
@@ -45,8 +49,12 @@ export function TemplatePicker({
   onSelectTemplate,
 }: TemplatePickerProps) {
   const panelId = useId()
+  const panelRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState('')
+  const [researchPaperStep, setResearchPaperStep] = useState<
+    null | 'choose'
+  >(null)
   const [usage, setUsage] = useState<TemplateUsageState>(() =>
     loadTemplateUsage()
   )
@@ -82,7 +90,10 @@ export function TemplatePicker({
   }, [open])
 
   useEffect(() => {
-    if (!open) setQuery('')
+    if (!open) {
+      setQuery('')
+      setResearchPaperStep(null)
+    }
   }, [open])
 
   useEffect(() => {
@@ -96,7 +107,11 @@ export function TemplatePicker({
 
   useEffect(() => {
     if (!open) return
-    const onScroll = () => onOpenChange(false)
+    const onScroll = (e: Event) => {
+      const t = e.target
+      if (t instanceof Node && panelRef.current?.contains(t)) return
+      onOpenChange(false)
+    }
     window.addEventListener('scroll', onScroll, true)
     return () => window.removeEventListener('scroll', onScroll, true)
   }, [open, onOpenChange])
@@ -114,10 +129,25 @@ export function TemplatePicker({
 
   const pick = useCallback(
     (id: NoteTemplateId) => {
+      if (id === 'research-paper') {
+        setResearchPaperStep('choose')
+        return
+      }
       recordTemplateUse(id)
       refreshUsage()
       onSelectTemplate(id)
       onOpenChange(false)
+    },
+    [onOpenChange, onSelectTemplate, refreshUsage]
+  )
+
+  const confirmResearchPaper = useCallback(
+    (variant: ResearchPaperVariant) => {
+      recordTemplateUse('research-paper')
+      refreshUsage()
+      onSelectTemplate('research-paper', { researchPaperVariant: variant })
+      onOpenChange(false)
+      setResearchPaperStep(null)
     },
     [onOpenChange, onSelectTemplate, refreshUsage]
   )
@@ -142,12 +172,14 @@ export function TemplatePicker({
         onClick={() => onOpenChange(false)}
       />
       <div
+        ref={panelRef}
         id={panelId}
         role="dialog"
         aria-label="Templates"
         className={cn(
           selectMenuPanelClass,
-          'fixed z-[70] flex max-h-[min(380px,70vh)] flex-col overflow-hidden',
+          '!py-0',
+          'fixed z-[70] flex h-[min(380px,70dvh)] min-h-0 flex-col overflow-hidden',
           'menu-pop-in'
         )}
         style={{
@@ -157,34 +189,61 @@ export function TemplatePicker({
         }}
       >
         <div className="shrink-0 border-b border-slate-200/35 px-2 py-1.5 dark:border-white/[0.05]">
-          <div className="flex items-center gap-1.5">
-            <label className="sr-only" htmlFor={`${panelId}-search`}>
-              Search templates
-            </label>
-            <input
-              ref={searchRef}
-              id={`${panelId}-search`}
-              type="search"
-              data-shortcut-ignore
-              placeholder="Search…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className={cn(
-                'min-w-0 flex-1 rounded-md border border-slate-200/55 bg-white/90 px-2 py-1',
-                'text-[12px] text-slate-800 placeholder:text-slate-400/75',
-                'outline-none ring-0 focus:border-sky-400/35 focus:ring-1 focus:ring-sky-500/15',
-                'dark:border-white/[0.07] dark:bg-[#12131a]/90 dark:text-slate-200',
-                'dark:placeholder:text-slate-600/75 dark:focus:border-sky-500/30'
-              )}
-              autoComplete="off"
-              autoCorrect="off"
-            />
-            <EditorHelpPopover variant="compact" />
-          </div>
+          {researchPaperStep === 'choose' ? (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setResearchPaperStep(null)}
+                className={cn(
+                  'shrink-0 rounded-md px-2 py-1 text-[11px] font-medium text-slate-600',
+                  'transition hover:bg-slate-100/90 hover:text-slate-900',
+                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/25',
+                  'dark:text-slate-400 dark:hover:bg-white/[0.06] dark:hover:text-slate-200'
+                )}
+              >
+                ← Back
+              </button>
+              <span className="min-w-0 truncate text-[12px] font-semibold text-slate-800 dark:text-slate-200/95">
+                Research paper
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <label className="sr-only" htmlFor={`${panelId}-search`}>
+                Search templates
+              </label>
+              <input
+                ref={searchRef}
+                id={`${panelId}-search`}
+                type="search"
+                data-shortcut-ignore
+                placeholder="Search…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className={cn(
+                  'min-w-0 flex-1 rounded-md border border-slate-200/55 bg-white/90 px-2 py-1',
+                  'text-[12px] text-slate-800 placeholder:text-slate-400/75',
+                  'outline-none ring-0 focus:border-sky-400/35 focus:ring-1 focus:ring-sky-500/15',
+                  'dark:border-white/[0.07] dark:bg-[#12131a]/90 dark:text-slate-200',
+                  'dark:placeholder:text-slate-600/75 dark:focus:border-sky-500/30'
+                )}
+                autoComplete="off"
+                autoCorrect="off"
+              />
+              <EditorHelpPopover variant="compact" />
+            </div>
+          )}
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-1.5 py-1.5">
-          {searchMode ? (
+        <div
+          className={cn(
+            'picker-panel-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto',
+            'px-1.5 py-1.5'
+          )}
+        >
+          {researchPaperStep === 'choose' ? (
+            <ResearchPaperVariantPanel onConfirm={confirmResearchPaper} />
+          ) : searchMode ? (
             <SearchResultsList
               items={searchResults}
               query={query}
@@ -209,14 +268,14 @@ export function TemplatePicker({
                     onClick={() => pick(m.id)}
                     className={cn(
                       'rounded-md border border-slate-200/45 bg-white/50 px-2 py-1.5 text-left',
-                      'text-[11px] font-medium leading-tight text-slate-700 transition',
+                      'text-[11px] font-medium leading-snug text-slate-700 transition',
                       'hover:border-slate-300/70 hover:bg-slate-50/90',
                       'focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/25',
                       'dark:border-white/[0.06] dark:bg-white/[0.02] dark:text-slate-300/95',
                       'dark:hover:border-white/[0.1] dark:hover:bg-white/[0.04]'
                     )}
                   >
-                    {m.shortLabel}
+                    <span className="line-clamp-2">{m.label}</span>
                   </button>
                 ))}
               </div>
@@ -262,6 +321,55 @@ export function TemplatePicker({
       </div>
     </>,
     document.body
+  )
+}
+
+function ResearchPaperVariantPanel({
+  onConfirm,
+}: {
+  onConfirm: (variant: ResearchPaperVariant) => void
+}) {
+  return (
+    <div className="space-y-2 px-0.5 pb-1 pt-0.5">
+      <p className="px-1 text-[11px] leading-snug text-slate-500 dark:text-slate-600/90">
+        Academic outline with headings, or a LaTeX skeleton in a code block
+        (editable plain text).
+      </p>
+      <button
+        type="button"
+        onClick={() => onConfirm('standard')}
+        className={cn(
+          'flex w-full flex-col gap-0.5 rounded-md border border-slate-200/45 bg-white/50 px-2.5 py-2 text-left',
+          'transition hover:border-slate-300/70 hover:bg-slate-50/90',
+          'focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/25',
+          'dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-white/[0.1] dark:hover:bg-white/[0.04]'
+        )}
+      >
+        <span className="text-[12px] font-semibold text-slate-800 dark:text-slate-200/95">
+          Standard
+        </span>
+        <span className="text-[10px] leading-snug text-slate-500 dark:text-slate-600/85">
+          Topic, thesis, sections, sources
+        </span>
+      </button>
+      <button
+        type="button"
+        onClick={() => onConfirm('latex')}
+        className={cn(
+          'flex w-full flex-col gap-0.5 rounded-md border border-slate-200/45 bg-white/50 px-2.5 py-2 text-left',
+          'transition hover:border-slate-300/70 hover:bg-slate-50/90',
+          'focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-500/25',
+          'dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-white/[0.1] dark:hover:bg-white/[0.04]'
+        )}
+      >
+        <span className="text-[12px] font-semibold text-slate-800 dark:text-slate-200/95">
+          LaTeX
+        </span>
+        <span className="text-[10px] leading-snug text-slate-500 dark:text-slate-600/85">
+          Pre-filled preamble, sections, bibliography lines
+        </span>
+      </button>
+    </div>
   )
 }
 
@@ -506,30 +614,6 @@ function CategoryMiniIcon({ id }: { id: TemplateCategoryId }) {
             stroke="currentColor"
             strokeWidth="1.6"
             strokeLinecap="round"
-          />
-        </svg>
-      )
-    case 'technical':
-      return (
-        <svg className={cls} viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path
-            d="m8 9 3 3-3 3m5-6 3 3-3 3M4 6h16v12H4z"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      )
-    case 'latex':
-      return (
-        <svg className={cls} viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path
-            d="M7 18 10 6l2 8 3-10h5"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
           />
         </svg>
       )

@@ -1,18 +1,31 @@
 import { create } from 'zustand'
-import type { Note, NoteTemplateId, NoteVersion, Reference, SidebarTab } from '../types'
-import { getTemplateHtml } from '../lib/templates'
+import type {
+  Note,
+  NoteTemplateId,
+  NoteVersion,
+  Reference,
+  SidebarTab,
+} from '../types'
+import { getTemplateHtml, type NoteTemplateOptions } from '../lib/templates'
 import { appendVersion } from '../lib/versionHistory'
 import { findNoteIdByTitle } from '../lib/wikiLinks'
 
-export function createEmptyNote(template: NoteTemplateId = 'blank'): Note {
+export function createEmptyNote(
+  template: NoteTemplateId = 'blank',
+  options?: NoteTemplateOptions
+): Note {
   const now = new Date().toISOString()
-  const { title, html } = getTemplateHtml(template)
+  const { title, body, editorMode, folder, tags } = getTemplateHtml(
+    template,
+    options
+  )
   return {
     id: crypto.randomUUID(),
     title,
-    content: html,
-    tags: [],
-    folder: '',
+    content: body,
+    editorMode,
+    tags,
+    folder,
     createdAt: now,
     updatedAt: now,
   }
@@ -25,7 +38,10 @@ type AppState = {
   activeSidebarTab: SidebarTab
   versionsByNoteId: Record<string, NoteVersion[]>
   addNote: (note?: Note) => void
-  addNoteFromTemplate: (template: NoteTemplateId) => void
+  addNoteFromTemplate: (
+    template: NoteTemplateId,
+    options?: NoteTemplateOptions
+  ) => void
   deleteNote: (id: string) => void
   setCurrentNoteId: (id: string | null) => void
   updateCurrentNoteContent: (content: string) => void
@@ -75,8 +91,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     }))
   },
 
-  addNoteFromTemplate: (template) => {
-    const n = createEmptyNote(template)
+  addNoteFromTemplate: (template, options) => {
+    const n = createEmptyNote(template, options)
     get().addNote(n)
   },
 
@@ -170,13 +186,31 @@ export const useAppStore = create<AppState>((set, get) => ({
       const versions = s.versionsByNoteId[noteId] ?? []
       const v = versions.find((x) => x.id === versionId)
       if (!v) return s
+      const note = s.notes.find((n) => n.id === noteId)
+      if (!note) return s
+      if (note.content === v.content) return s
+
+      const existing = s.versionsByNoteId[noteId]
+      const nextList = appendVersion(
+        existing,
+        v.content,
+        note.content,
+        note.title
+      )
+
       const now = new Date().toISOString()
       const notes = s.notes.map((n) =>
         n.id === noteId
           ? { ...n, content: v.content, updatedAt: now }
           : n
       )
-      return { notes }
+      return {
+        notes,
+        versionsByNoteId: {
+          ...s.versionsByNoteId,
+          [noteId]: nextList,
+        },
+      }
     }),
 
   importState: (notes, versionsByNoteId) =>

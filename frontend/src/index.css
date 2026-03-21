@@ -9,6 +9,11 @@
   --app-sidebar: rgb(236 234 228 / 0.95);
   --app-sidebar-border: rgb(203 213 225 / 0.35);
   --app-focus: rgb(14 165 233 / 0.14);
+  /* Upper window chrome — slightly below main paper so the bar reads as its own plane */
+  --app-chrome: #edece6;
+  --app-chrome-border: rgb(203 213 225 / 0.42);
+  --app-rail: #e4e2dc;
+  --app-toolbar-surface: rgb(255 255 255 / 0.42);
 }
 
 .dark {
@@ -17,6 +22,10 @@
   --app-sidebar: rgb(15 16 24 / 0.98);
   --app-sidebar-border: rgb(255 255 255 / 0.04);
   --app-focus: rgb(56 189 248 / 0.12);
+  --app-chrome: #101218;
+  --app-chrome-border: rgb(255 255 255 / 0.055);
+  --app-rail: #0b0c10;
+  --app-toolbar-surface: rgb(255 255 255 / 0.04);
 }
 
 html[data-color-scheme='slate'] {
@@ -24,12 +33,20 @@ html[data-color-scheme='slate'] {
   --app-main: #f8fafc;
   --app-sidebar: rgb(241 245 249 / 0.96);
   --app-sidebar-border: rgb(148 163 184 / 0.35);
+  --app-chrome: #e8edf3;
+  --app-chrome-border: rgb(148 163 184 / 0.38);
+  --app-rail: #e2e8f0;
+  --app-toolbar-surface: rgb(255 255 255 / 0.55);
 }
 .dark[data-color-scheme='slate'] {
   --app-bg: #0b1220;
   --app-main: #0f172a;
   --app-sidebar: rgb(15 23 42 / 0.96);
   --app-sidebar-border: rgb(148 163 184 / 0.12);
+  --app-chrome: #111c2e;
+  --app-chrome-border: rgb(148 163 184 / 0.14);
+  --app-rail: #0b1220;
+  --app-toolbar-surface: rgb(255 255 255 / 0.04);
 }
 
 html[data-color-scheme='graphite'] {
@@ -37,12 +54,20 @@ html[data-color-scheme='graphite'] {
   --app-main: #f3f3f3;
   --app-sidebar: rgb(235 235 235 / 0.96);
   --app-sidebar-border: rgb(120 120 120 / 0.2);
+  --app-chrome: #e6e6e6;
+  --app-chrome-border: rgb(120 120 120 / 0.22);
+  --app-rail: #dedede;
+  --app-toolbar-surface: rgb(255 255 255 / 0.48);
 }
 .dark[data-color-scheme='graphite'] {
   --app-bg: #0a0a0b;
   --app-main: #111113;
   --app-sidebar: rgb(24 24 27 / 0.96);
   --app-sidebar-border: rgb(255 255 255 / 0.06);
+  --app-chrome: #0f0f10;
+  --app-chrome-border: rgb(255 255 255 / 0.065);
+  --app-rail: #0a0a0b;
+  --app-toolbar-surface: rgb(255 255 255 / 0.035);
 }
 
 html[data-color-scheme='indigo'] {
@@ -50,12 +75,20 @@ html[data-color-scheme='indigo'] {
   --app-main: #f7f7ff;
   --app-sidebar: rgb(238 242 255 / 0.95);
   --app-sidebar-border: rgb(165 180 252 / 0.35);
+  --app-chrome: #ebedff;
+  --app-chrome-border: rgb(165 180 252 / 0.38);
+  --app-rail: #e2e8ff;
+  --app-toolbar-surface: rgb(255 255 255 / 0.52);
 }
 .dark[data-color-scheme='indigo'] {
   --app-bg: #0c0d18;
   --app-main: #12142a;
   --app-sidebar: rgb(30 27 75 / 0.5);
   --app-sidebar-border: rgb(129 140 248 / 0.18);
+  --app-chrome: #141528;
+  --app-chrome-border: rgb(129 140 248 / 0.2);
+  --app-rail: #0c0d18;
+  --app-toolbar-surface: rgb(255 255 255 / 0.04);
 }
 
 html[data-color-scheme='forest'] {
@@ -63,12 +96,20 @@ html[data-color-scheme='forest'] {
   --app-main: #f6faf7;
   --app-sidebar: rgb(236 245 240 / 0.95);
   --app-sidebar-border: rgb(134 179 154 / 0.35);
+  --app-chrome: #e8f0ee;
+  --app-chrome-border: rgb(134 179 154 / 0.38);
+  --app-rail: #e2ebe8;
+  --app-toolbar-surface: rgb(255 255 255 / 0.48);
 }
 .dark[data-color-scheme='forest'] {
   --app-bg: #0b110e;
   --app-main: #101916;
   --app-sidebar: rgb(20 35 30 / 0.55);
   --app-sidebar-border: rgb(52 211 153 / 0.12);
+  --app-chrome: #0f1815;
+  --app-chrome-border: rgb(52 211 153 / 0.14);
+  --app-rail: #0b110e;
+  --app-toolbar-surface: rgb(255 255 255 / 0.035);
 }
 
 html[data-color-scheme='rose'] {
@@ -76,12 +117,20 @@ html[data-color-scheme='rose'] {
   --app-main: #fff8f9;
   --app-sidebar: rgb(255 241 244 / 0.95);
   --app-sidebar-border: rgb(251 113 133 / 0.25);
+  --app-chrome: #f3ecef;
+  --app-chrome-border: rgb(251 113 133 / 0.28);
+  --app-rail: #efe8eb;
+  --app-toolbar-surface: rgb(255 255 255 / 0.5);
 }
 .dark[data-color-scheme='rose'] {
   --app-bg: #110c0e;
   --app-main: #1a1216;
   --app-sidebar: rgb(55 20 35 / 0.45);
   --app-sidebar-border: rgb(251 113 133 / 0.14);
+  --app-chrome: #171012;
+  --app-chrome-border: rgb(251 113 133 / 0.16);
+  --app-rail: #110c0e;
+  --app-toolbar-surface: rgb(255 255 255 / 0.035);
 }
 
 :root {
@@ -136,15 +185,27 @@ html[data-color-scheme='rose'] {
   }
 }
 
-#root {
-  width: 100%;
-  min-height: 100svh;
-  margin: 0;
-  box-sizing: border-box;
+html {
+  height: 100%;
+  min-height: 100dvh;
 }
 
 body {
   margin: 0;
+  min-height: 100dvh;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
 h1,
@@ -264,6 +325,85 @@ code {
 
 .menu-pop-in {
   animation: menu-pop 0.15s ease-out forwards;
+}
+
+/* Template picker (and similar): one scrollport, no scroll chaining to the page */
+.picker-panel-scroll {
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(148 163 184 / 0.42) transparent;
+}
+.dark .picker-panel-scroll {
+  scrollbar-color: rgb(71 85 105 / 0.42) transparent;
+}
+.picker-panel-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.picker-panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.picker-panel-scroll::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgb(148 163 184 / 0.42);
+}
+.dark .picker-panel-scroll::-webkit-scrollbar-thumb {
+  background: rgb(71 85 105 / 0.42);
+}
+
+/* Sidebar placeholder: horizontal file-path overflow — same slate thumbs as picker */
+.file-path-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(148 163 184 / 0.45) transparent;
+}
+.dark .file-path-scroll {
+  scrollbar-color: rgb(71 85 105 / 0.42) transparent;
+}
+.file-path-scroll::-webkit-scrollbar {
+  height: 5px;
+}
+.file-path-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.file-path-scroll::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgb(148 163 184 / 0.45);
+}
+.dark .file-path-scroll::-webkit-scrollbar-thumb {
+  background: rgb(71 85 105 / 0.42);
+}
+
+/* LaTeX note: CodeMirror + preview scrollports — thin, neutral thumbs */
+.latex-cm-root .cm-scroller,
+.latex-preview-panel {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(148 163 184 / 0.38) transparent;
+}
+.dark .latex-cm-root .cm-scroller,
+.dark .latex-preview-panel {
+  scrollbar-color: rgb(71 85 105 / 0.42) transparent;
+}
+.latex-cm-root .cm-scroller::-webkit-scrollbar,
+.latex-preview-panel::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.latex-cm-root .cm-scroller::-webkit-scrollbar-track,
+.latex-preview-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+.latex-cm-root .cm-scroller::-webkit-scrollbar-thumb,
+.latex-preview-panel::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgb(148 163 184 / 0.38);
+}
+.dark .latex-cm-root .cm-scroller::-webkit-scrollbar-thumb,
+.dark .latex-preview-panel::-webkit-scrollbar-thumb {
+  background: rgb(71 85 105 / 0.42);
+}
+
+/* LaTeX math preview — soften default near-black math in light mode */
+html:not(.dark) .latex-math-preview .katex {
+  color: rgb(51 65 85);
 }
 
 /* TipTap slash menu (tippy) — chrome only; content is our panel. */

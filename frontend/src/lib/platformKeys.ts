@@ -5,6 +5,24 @@ export function isApplePlatform(): boolean {
   return /Mac OS/.test(navigator.userAgent)
 }
 
+/** Ctrl on Windows/Linux; ⌘ on Apple platforms — use with `KeyboardEvent.code` matchers. */
+export function isPrimaryModifier(e: KeyboardEvent): boolean {
+  return isApplePlatform() ? e.metaKey : e.ctrlKey
+}
+
+/**
+ * True when running inside a packaged shell (Electron/Tauri). Use for native menus,
+ * window chrome, or shell-specific behavior—not for shortcut labels (the app is desktop-first;
+ * labels always reflect the shipped shortcuts below).
+ */
+export function isDesktopShell(): boolean {
+  if (typeof window === 'undefined') return false
+  return Boolean(
+    (window as unknown as { __NOTES_DESKTOP_SHELL__?: boolean })
+      .__NOTES_DESKTOP_SHELL__
+  )
+}
+
 /** Modifier label for shortcuts (⌘ on Apple, Ctrl elsewhere). */
 export function modSymbol(): string {
   return isApplePlatform() ? '⌘' : 'Ctrl'
@@ -31,6 +49,7 @@ export function formatShortcut(parts: string[]): string {
     .join('')
 }
 
+/** New blank note — matches `keyboardShortcuts` / `useKeyboardShortcuts` (Mod+N). */
 export function shortcutNewNote(): string {
   return formatShortcut([modSymbol(), 'N'])
 }
@@ -46,7 +65,7 @@ export function shortcutSettings(): string {
 export function shortcutToggleLeftSidebar(): string {
   const mod = modSymbol()
   const a = formatShortcut([mod, keyLabel('Backquote')])
-  const b = formatShortcut([mod, '.'])
+  const b = formatShortcut([mod, keyLabel('Period')])
   return `${a} · ${b}`
 }
 

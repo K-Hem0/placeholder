@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo } from 'react'
-import type { NoteVersion } from '../../types'
+import type { EditorMode, NoteVersion } from '../../types'
 import { cn } from '../../lib/cn'
 import { diffPlainLines, htmlToPlainText } from '../../lib/htmlPlain'
 
@@ -20,15 +20,15 @@ function formatWhen(iso: string) {
 }
 
 const previewBodyClass =
-  'notes-editor-preview max-w-none px-3 py-3 text-[14px] leading-[1.65] text-slate-800 dark:text-slate-300/95 ' +
+  'notes-editor-preview max-w-none px-3 py-3 text-[12px] leading-[1.65] text-slate-800 dark:text-slate-300/95 ' +
   '[&_p]:my-3 [&_p:first-child]:mt-0 ' +
   '[&_ul]:my-3 [&_ol]:my-3 [&_li]:marker:text-slate-500 ' +
-  '[&_h1]:mb-2 [&_h1]:mt-6 [&_h1]:text-[1.35rem] [&_h1]:font-semibold [&_h1]:first:mt-0 ' +
-  '[&_h2]:mb-2 [&_h2]:mt-5 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:first:mt-0 ' +
-  '[&_h3]:mb-1.5 [&_h3]:mt-4 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:first:mt-0 ' +
+  '[&_h1]:mb-2 [&_h1]:mt-[1.35em] [&_h1]:text-[1.25em] [&_h1]:font-semibold [&_h1]:tracking-[-0.01em] [&_h1]:leading-snug [&_h1]:first:mt-0 ' +
+  '[&_h2]:mb-1.5 [&_h2]:mt-[1.15em] [&_h2]:text-[1.125em] [&_h2]:font-semibold [&_h2]:tracking-[-0.008em] [&_h2]:leading-snug [&_h2]:first:mt-0 ' +
+  '[&_h3]:mb-1.5 [&_h3]:mt-[1em] [&_h3]:text-[1.0625em] [&_h3]:font-semibold [&_h3]:tracking-tight [&_h3]:leading-snug [&_h3]:first:mt-0 ' +
   '[&_blockquote]:border-l-2 [&_blockquote]:border-slate-300/80 [&_blockquote]:pl-3 [&_blockquote]:text-slate-700 dark:[&_blockquote]:border-white/[0.12] ' +
   '[&_code]:rounded [&_code]:bg-slate-200/55 [&_code]:px-1 [&_code]:py-px [&_code]:text-[0.9em] dark:[&_code]:bg-white/[0.08] ' +
-  '[&_pre]:rounded-md [&_pre]:border [&_pre]:border-slate-200/70 [&_pre]:bg-slate-100/80 [&_pre]:p-3 [&_pre]:text-[13px] dark:[&_pre]:border-white/[0.06] dark:[&_pre]:bg-[#12131a]'
+  '[&_pre]:rounded-md [&_pre]:border [&_pre]:border-slate-200/70 [&_pre]:bg-slate-100/80 [&_pre]:p-3 [&_pre]:text-[11px] dark:[&_pre]:border-white/[0.06] dark:[&_pre]:bg-[#12131a]'
 
 type VersionPreviewModalProps = {
   open: boolean
@@ -36,6 +36,8 @@ type VersionPreviewModalProps = {
   version: NoteVersion | null
   currentContentHtml: string
   currentTitle: string
+  /** How `currentContentHtml` / `version.content` should be shown and diffed. */
+  editorMode?: EditorMode
   onConfirmRestore: (versionId: string) => void
 }
 
@@ -45,6 +47,7 @@ export function VersionPreviewModal({
   version,
   currentContentHtml,
   currentTitle,
+  editorMode = 'rich',
   onConfirmRestore,
 }: VersionPreviewModalProps) {
   const titleId = useId()
@@ -59,14 +62,16 @@ export function VersionPreviewModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
-  const plainCurrent = useMemo(
-    () => htmlToPlainText(currentContentHtml),
-    [currentContentHtml]
-  )
-  const plainVersion = useMemo(
-    () => (version ? htmlToPlainText(version.content) : ''),
-    [version]
-  )
+  const plainCurrent = useMemo(() => {
+    if (editorMode === 'latex') return currentContentHtml
+    return htmlToPlainText(currentContentHtml)
+  }, [currentContentHtml, editorMode])
+
+  const plainVersion = useMemo(() => {
+    if (!version) return ''
+    if (editorMode === 'latex') return version.content
+    return htmlToPlainText(version.content)
+  }, [version, editorMode])
 
   const lineDiff = useMemo(
     () => diffPlainLines(plainCurrent, plainVersion),
@@ -97,7 +102,7 @@ export function VersionPreviewModal({
         aria-labelledby={titleId}
         aria-describedby={descId}
         className={cn(
-          'relative z-[101] flex max-h-[min(92vh,880px)] w-full max-w-[960px] flex-col overflow-hidden rounded-2xl border',
+          'relative z-[101] flex max-h-[min(92dvh,880px)] w-full max-w-[960px] flex-col overflow-hidden rounded-2xl border',
           'border-slate-200/80 bg-[var(--app-main)] shadow-2xl shadow-slate-900/10',
           'dark:border-white/[0.08] dark:shadow-black/40'
         )}
@@ -119,19 +124,41 @@ export function VersionPreviewModal({
               <div className="bg-slate-100/50 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.08em] text-slate-500 dark:bg-white/[0.03] dark:text-slate-500/90">
                 Current
               </div>
-              <div
-                className={cn(previewBodyClass, 'max-h-[min(38vh,320px)] overflow-y-auto')}
-                dangerouslySetInnerHTML={{ __html: currentContentHtml || '<p></p>' }}
-              />
+              {editorMode === 'latex' ? (
+                <pre
+                  className={cn(
+                    previewBodyClass,
+                    'max-h-[min(38vh,320px)] overflow-y-auto whitespace-pre-wrap font-mono text-[11px] leading-relaxed'
+                  )}
+                >
+                  {currentContentHtml || ''}
+                </pre>
+              ) : (
+                <div
+                  className={cn(previewBodyClass, 'max-h-[min(38vh,320px)] overflow-y-auto')}
+                  dangerouslySetInnerHTML={{ __html: currentContentHtml || '<p></p>' }}
+                />
+              )}
             </div>
             <div>
               <div className="bg-sky-50/60 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.08em] text-sky-800/90 dark:bg-sky-950/25 dark:text-sky-300/90">
                 This version
               </div>
-              <div
-                className={cn(previewBodyClass, 'max-h-[min(38vh,320px)] overflow-y-auto')}
-                dangerouslySetInnerHTML={{ __html: version.content || '<p></p>' }}
-              />
+              {editorMode === 'latex' ? (
+                <pre
+                  className={cn(
+                    previewBodyClass,
+                    'max-h-[min(38vh,320px)] overflow-y-auto whitespace-pre-wrap font-mono text-[11px] leading-relaxed'
+                  )}
+                >
+                  {version.content || ''}
+                </pre>
+              ) : (
+                <div
+                  className={cn(previewBodyClass, 'max-h-[min(38vh,320px)] overflow-y-auto')}
+                  dangerouslySetInnerHTML={{ __html: version.content || '<p></p>' }}
+                />
+              )}
             </div>
           </div>
 
@@ -140,7 +167,7 @@ export function VersionPreviewModal({
               <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.08em] text-slate-400 dark:text-slate-500/90">
                 Text changes (plain)
               </p>
-              <div className="max-h-[min(22vh,200px)] space-y-0.5 overflow-y-auto rounded-lg border border-slate-200/50 bg-slate-50/50 p-2 font-mono text-[11px] leading-snug dark:border-white/[0.06] dark:bg-black/20">
+              <div className="max-h-[min(22dvh,200px)] space-y-0.5 overflow-y-auto rounded-lg border border-slate-200/50 bg-slate-50/50 p-2 font-mono text-[11px] leading-snug dark:border-white/[0.06] dark:bg-black/20">
                 {lineDiff.map((row, i) => (
                   <div
                     key={i}

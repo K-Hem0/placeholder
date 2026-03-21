@@ -3,6 +3,7 @@
  * Used for backlinks and resolving navigation targets.
  */
 
+import type { EditorMode } from '../types'
 import { htmlToPlainText } from './htmlPlain'
 
 const WIKI_ATTR = /data-wiki-title="([^"]+)"/gi
@@ -65,11 +66,15 @@ export type BacklinkEntry = {
 
 /** Snippet around a reference to the current note’s title (plain text, best-effort). */
 export function snippetAroundLinkToTitle(
-  sourceHtml: string,
+  sourceContent: string,
   targetTitle: string,
+  sourceEditorMode: EditorMode = 'rich',
   radius = 56
 ): string {
-  const plain = htmlToPlainText(sourceHtml)
+  const plain =
+    sourceEditorMode === 'latex'
+      ? sourceContent
+      : htmlToPlainText(sourceContent)
   const needle = targetTitle.trim()
   if (!needle) return plain.slice(0, 140) + (plain.length > 140 ? '…' : '')
 
@@ -89,7 +94,7 @@ export function snippetAroundLinkToTitle(
 }
 
 export function computeBacklinksWithSnippets(
-  notes: { id: string; title: string; content: string }[],
+  notes: { id: string; title: string; content: string; editorMode?: EditorMode }[],
   currentNoteId: string
 ): BacklinkEntry[] {
   const base = computeBacklinks(notes, currentNoteId)
@@ -98,7 +103,11 @@ export function computeBacklinksWithSnippets(
   return base.map((b) => {
     const n = notes.find((x) => x.id === b.id)
     const snippet = n
-      ? snippetAroundLinkToTitle(n.content, current.title)
+      ? snippetAroundLinkToTitle(
+          n.content,
+          current.title,
+          n.editorMode ?? 'rich'
+        )
       : ''
     return { ...b, snippet }
   })
