@@ -1,0 +1,278 @@
+@import 'tailwindcss';
+
+@variant dark (&:where(.dark, .dark *));
+
+/* App surfaces — tuned per color scheme; extend in one place. */
+:root {
+  --app-bg: #f5f4f0;
+  --app-main: #f9f8f4;
+  --app-sidebar: rgb(236 234 228 / 0.95);
+  --app-sidebar-border: rgb(203 213 225 / 0.35);
+  --app-focus: rgb(14 165 233 / 0.14);
+}
+
+.dark {
+  --app-bg: #0c0d11;
+  --app-main: #12131a;
+  --app-sidebar: rgb(15 16 24 / 0.98);
+  --app-sidebar-border: rgb(255 255 255 / 0.04);
+  --app-focus: rgb(56 189 248 / 0.12);
+}
+
+html[data-color-scheme='slate'] {
+  --app-bg: #f1f5f9;
+  --app-main: #f8fafc;
+  --app-sidebar: rgb(241 245 249 / 0.96);
+  --app-sidebar-border: rgb(148 163 184 / 0.35);
+}
+.dark[data-color-scheme='slate'] {
+  --app-bg: #0b1220;
+  --app-main: #0f172a;
+  --app-sidebar: rgb(15 23 42 / 0.96);
+  --app-sidebar-border: rgb(148 163 184 / 0.12);
+}
+
+html[data-color-scheme='graphite'] {
+  --app-bg: #ececec;
+  --app-main: #f3f3f3;
+  --app-sidebar: rgb(235 235 235 / 0.96);
+  --app-sidebar-border: rgb(120 120 120 / 0.2);
+}
+.dark[data-color-scheme='graphite'] {
+  --app-bg: #0a0a0b;
+  --app-main: #111113;
+  --app-sidebar: rgb(24 24 27 / 0.96);
+  --app-sidebar-border: rgb(255 255 255 / 0.06);
+}
+
+html[data-color-scheme='indigo'] {
+  --app-bg: #f3f4ff;
+  --app-main: #f7f7ff;
+  --app-sidebar: rgb(238 242 255 / 0.95);
+  --app-sidebar-border: rgb(165 180 252 / 0.35);
+}
+.dark[data-color-scheme='indigo'] {
+  --app-bg: #0c0d18;
+  --app-main: #12142a;
+  --app-sidebar: rgb(30 27 75 / 0.5);
+  --app-sidebar-border: rgb(129 140 248 / 0.18);
+}
+
+html[data-color-scheme='forest'] {
+  --app-bg: #f0f5f2;
+  --app-main: #f6faf7;
+  --app-sidebar: rgb(236 245 240 / 0.95);
+  --app-sidebar-border: rgb(134 179 154 / 0.35);
+}
+.dark[data-color-scheme='forest'] {
+  --app-bg: #0b110e;
+  --app-main: #101916;
+  --app-sidebar: rgb(20 35 30 / 0.55);
+  --app-sidebar-border: rgb(52 211 153 / 0.12);
+}
+
+html[data-color-scheme='rose'] {
+  --app-bg: #faf5f6;
+  --app-main: #fff8f9;
+  --app-sidebar: rgb(255 241 244 / 0.95);
+  --app-sidebar-border: rgb(251 113 133 / 0.25);
+}
+.dark[data-color-scheme='rose'] {
+  --app-bg: #110c0e;
+  --app-main: #1a1216;
+  --app-sidebar: rgb(55 20 35 / 0.45);
+  --app-sidebar-border: rgb(251 113 133 / 0.14);
+}
+
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #16171d;
+    --border: #2e303a;
+    --code-bg: #1f2028;
+    --accent: #c084fc;
+    --accent-bg: rgba(192, 132, 252, 0.15);
+    --accent-border: rgba(192, 132, 252, 0.5);
+    --social-bg: rgba(47, 48, 58, 0.5);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
+
+  #social .button-icon {
+    filter: invert(1) brightness(2);
+  }
+}
+
+#root {
+  width: 100%;
+  min-height: 100svh;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2 {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+h1 {
+  font-size: 56px;
+  letter-spacing: -1.68px;
+  margin: 32px 0;
+  @media (max-width: 1024px) {
+    font-size: 36px;
+    margin: 20px 0;
+  }
+}
+h2 {
+  font-size: 24px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+  margin: 0 0 8px;
+  @media (max-width: 1024px) {
+    font-size: 20px;
+  }
+}
+p {
+  margin: 0;
+}
+
+code,
+.counter {
+  font-family: var(--mono);
+  display: inline-flex;
+  border-radius: 4px;
+  color: var(--text-h);
+}
+
+code {
+  font-size: 15px;
+  line-height: 135%;
+  padding: 4px 8px;
+  background: var(--code-bg);
+}
+
+/* ProseMirror / TipTap editor root */
+.ProseMirror {
+  white-space: pre-wrap;
+  outline: none;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror li {
+  margin: 0.25rem 0;
+}
+
+/* TipTap placeholder (empty blocks) */
+.notes-editor .ProseMirror p.is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: rgb(148 163 184 / 0.95);
+}
+
+.dark .notes-editor .ProseMirror p.is-empty::before {
+  color: rgb(100 116 139 / 0.85);
+}
+
+/* Internal wiki links: unresolved targets */
+.notes-editor .wiki-link.wiki-link--unresolved {
+  text-decoration-style: dashed;
+  color: rgb(100 116 139);
+  text-decoration-color: rgb(148 163 184 / 0.55);
+}
+.dark .notes-editor .wiki-link.wiki-link--unresolved {
+  color: rgb(148 163 184 / 0.85);
+  text-decoration-color: rgb(100 116 139 / 0.45);
+}
+
+.notes-editor-preview a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Line focus: dim non-focused paragraphs */
+.notes-editor.line-focus .ProseMirror > p {
+  opacity: 0.42;
+  transition: opacity 0.18s ease;
+}
+
+.notes-editor.line-focus .ProseMirror > p:focus-within {
+  opacity: 1;
+}
+
+@keyframes menu-pop {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.menu-pop-in {
+  animation: menu-pop 0.15s ease-out forwards;
+}
+
+/* TipTap slash menu (tippy) — chrome only; content is our panel. */
+.tippy-box[data-theme~='slash'] {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+.tippy-box[data-theme~='slash'] .tippy-content {
+  padding: 0;
+}
