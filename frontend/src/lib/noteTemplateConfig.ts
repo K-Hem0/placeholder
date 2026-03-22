@@ -18,14 +18,7 @@ function formatLongDate(d: Date): string {
   return new Intl.DateTimeFormat(undefined, { dateStyle: 'long' }).format(d)
 }
 
-/** Markdown templates for notes (supports LaTeX: $...$, $$...$$). */
-function mdDailyLectureBody(dateLine: string): string {
-  return (
-    `## Session details\n\n**Date** — ${dateLine}\n\n**Course** — \n\n**Topic** — \n\n---\n\n` +
-    `## Key Ideas\n\n- \n\n## Examples\n\n\n\n## Questions\n\n- \n\n## Summary\n\n`
-  )
-}
-
+/** Markdown template for research paper (latex mode: source + preview). */
 function mdResearchPaperBody(): string {
   return (
     `# Provisional title\n\n*One-sentence summary of the paper's central claim.*\n\n` +
@@ -34,11 +27,50 @@ function mdResearchPaperBody(): string {
   )
 }
 
-function mdBlogPostBody(dateLine: string): string {
+/** Rich HTML for daily/lecture notes (natural-language WYSIWYG). */
+function htmlDailyLectureBody(dateLine: string): string {
   return (
-    `> *Add a compelling subtitle for readers…*\n\n` +
-    `**Author** — \n\n**Date** — ${dateLine}\n\n**Tags** — \n\n---\n\n` +
-    `## Hook\n\n\n\n## Main Point\n\n\n\n## Supporting Sections\n\n### First angle\n\n\n\n### Second angle\n\n\n\n### Third angle\n\n\n\n## Closing\n\n`
+    `<p><span class="heading heading-1" data-inline-heading="1">Session details</span></p>
+<p><strong>Date</strong> — ${dateLine}</p>
+<p><strong>Course</strong> — </p>
+<p><strong>Topic</strong> — </p>
+<hr>
+<p><span class="heading heading-2" data-inline-heading="2">Key Ideas</span></p>
+<ul>
+<li><p> </p></li>
+</ul>
+<p><span class="heading heading-3" data-inline-heading="3">Examples</span></p>
+<p></p>
+<p><span class="heading heading-3" data-inline-heading="3">Questions</span></p>
+<ul>
+<li><p> </p></li>
+</ul>
+<p><span class="heading heading-2" data-inline-heading="2">Summary</span></p>
+<p></p>`
+  )
+}
+
+/** Rich HTML for blog posts (natural-language WYSIWYG). */
+function htmlBlogPostBody(dateLine: string): string {
+  return (
+    `<blockquote><p><em>Add a compelling subtitle for readers…</em></p></blockquote>
+<p><strong>Author</strong> — </p>
+<p><strong>Date</strong> — ${dateLine}</p>
+<p><strong>Tags</strong> — </p>
+<hr>
+<p><span class="heading heading-2" data-inline-heading="2">Hook</span></p>
+<p></p>
+<p><span class="heading heading-2" data-inline-heading="2">Main Point</span></p>
+<p></p>
+<p><span class="heading heading-2" data-inline-heading="2">Supporting Sections</span></p>
+<p><span class="heading heading-3" data-inline-heading="3">First angle</span></p>
+<p></p>
+<p><span class="heading heading-3" data-inline-heading="3">Second angle</span></p>
+<p></p>
+<p><span class="heading heading-3" data-inline-heading="3">Third angle</span></p>
+<p></p>
+<p><span class="heading heading-2" data-inline-heading="2">Closing</span></p>
+<p></p>`
   )
 }
 
@@ -80,8 +112,8 @@ export const NOTE_TEMPLATE_DEFINITIONS: NoteTemplateDefinition[] = [
       const today = formatLongDate(new Date())
       return {
         title: `Lecture Note — ${today}`,
-        editorMode: 'latex',
-        body: mdDailyLectureBody(today),
+        editorMode: 'rich',
+        body: htmlDailyLectureBody(today),
       }
     },
   },
@@ -90,7 +122,7 @@ export const NOTE_TEMPLATE_DEFINITIONS: NoteTemplateDefinition[] = [
     label: 'Research paper',
     shortLabel: 'Research',
     category: 'research',
-    hint: 'Formal outline with headings and sections',
+    hint: 'Markdown source + live LaTeX preview for formal papers',
     folder: 'Research',
     tags: ['research', 'paper'],
     build: () => ({
@@ -111,8 +143,8 @@ export const NOTE_TEMPLATE_DEFINITIONS: NoteTemplateDefinition[] = [
       const today = formatLongDate(new Date())
       return {
         title: 'New Blog Post',
-        editorMode: 'latex',
-        body: mdBlogPostBody(today),
+        editorMode: 'rich',
+        body: htmlBlogPostBody(today),
       }
     },
   },
