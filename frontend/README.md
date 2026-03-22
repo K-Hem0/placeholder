@@ -2,9 +2,9 @@
 
 ## Daftar — app setup
 
-- **Run (web):** `npm install` then `npm run dev` (Vite + React + TypeScript + Tailwind v4).
+- **Run (web):** `npm install` then `npm run dev` (Vite on **http://localhost:5932** + React + TypeScript + Tailwind v4). Literature search calls `/api/*`, proxied to the Semantic Scholar backend on port **8787**. From the **repo root**, use `npm install` + `npm run dev` to start **both** the backend and this frontend together.
 - **Run (desktop):** `npm run electron:dev` — starts the Vite dev server and launches the app in Electron. Use `npm run electron:build` to build installers (Windows NSIS, macOS DMG, Linux AppImage).
-- **Data:** notes and version snapshots persist in `localStorage` under `daftar-v1` (see `src/lib/schema.ts`). The storage layer is isolated so it can be swapped for IndexedDB, SQLite, or a file-backed backend later.
+- **Data:** notes, version snapshots, and per-note saved literature references persist in `localStorage` under `daftar-v1` (see `src/lib/schema.ts`). The storage layer is isolated so it can be swapped for IndexedDB, SQLite, or a file-backed backend later.
 
 ---
 

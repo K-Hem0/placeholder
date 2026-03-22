@@ -317,6 +317,7 @@ function AdvancedSection() {
           notes: s.notes,
           versionsByNoteId: s.versionsByNoteId,
           currentNoteId: s.currentNoteId,
+          referencesByNoteId: s.referencesByNoteId,
         })
       }
       e.target.value = ''
@@ -348,6 +349,7 @@ function AdvancedSection() {
         notes: [],
         versionsByNoteId: {},
         currentNoteId: null,
+        referencesByNoteId: {},
       })
     } finally {
       setResetBusy(false)

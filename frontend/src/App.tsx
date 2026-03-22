@@ -24,13 +24,24 @@ export default function App() {
   const skipSaveRef = useRef(true)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const hydratedRef = useRef(false)
-  const latestRef = useRef({ notes, versionsByNoteId, currentNoteId })
+  const referencesByNoteId = useAppStore((s) => s.referencesByNoteId)
+  const latestRef = useRef({
+    notes,
+    versionsByNoteId,
+    currentNoteId,
+    referencesByNoteId,
+  })
   const themePreference = useSettingsStore((s) => s.themePreference)
   const colorScheme = useSettingsStore((s) => s.colorScheme)
 
   useEffect(() => {
-    latestRef.current = { notes, versionsByNoteId, currentNoteId }
-  }, [notes, versionsByNoteId, currentNoteId])
+    latestRef.current = {
+      notes,
+      versionsByNoteId,
+      currentNoteId,
+      referencesByNoteId,
+    }
+  }, [notes, versionsByNoteId, currentNoteId, referencesByNoteId])
 
   useEffect(() => {
     if (hydratedRef.current) return
@@ -40,6 +51,7 @@ export default function App() {
       notes: loaded.notes,
       versionsByNoteId: loaded.versionsByNoteId,
       currentNoteId: resolveCurrentNoteId(loaded.notes, loaded.currentNoteId),
+      referencesByNoteId: loaded.referencesByNoteId,
     })
   }, [])
 
@@ -51,27 +63,37 @@ export default function App() {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     saveTimerRef.current = setTimeout(() => {
       saveTimerRef.current = null
-      const { notes: n, versionsByNoteId: v, currentNoteId: id } =
-        latestRef.current
+      const {
+        notes: n,
+        versionsByNoteId: v,
+        currentNoteId: id,
+        referencesByNoteId: refs,
+      } = latestRef.current
       savePersistedState({
         notes: n,
         versionsByNoteId: v,
         currentNoteId: id,
+        referencesByNoteId: refs,
       })
     }, AUTOSAVE_TO_DISK_MS)
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
-  }, [notes, versionsByNoteId, currentNoteId])
+  }, [notes, versionsByNoteId, currentNoteId, referencesByNoteId])
 
   useEffect(() => {
     const flush = () => {
-      const { notes: n, versionsByNoteId: v, currentNoteId: id } =
-        latestRef.current
+      const {
+        notes: n,
+        versionsByNoteId: v,
+        currentNoteId: id,
+        referencesByNoteId: refs,
+      } = latestRef.current
       savePersistedState({
         notes: n,
         versionsByNoteId: v,
         currentNoteId: id,
+        referencesByNoteId: refs,
       })
     }
     const onHide = () => {

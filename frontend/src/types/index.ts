@@ -34,6 +34,9 @@ export type Reference = {
   abstract: string
   url: string
   credibility: number
+  /** From literature search when available */
+  venue?: string
+  citationCount?: number
 }
 
 export type NoteTemplateId =

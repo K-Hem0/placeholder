@@ -1,4 +1,4 @@
-import type { EditorMode, Note, NoteVersion } from '../types'
+import type { EditorMode, Note, NoteVersion, Reference } from '../types'
 import { normalizeNoteForApp } from './noteNormalization'
 import { normalizePersistedNote } from './noteMigration'
 import {
@@ -38,6 +38,35 @@ function isNoteVersion(value: unknown): value is NoteVersion {
   )
 }
 
+function isReference(value: unknown): value is Reference {
+  if (value === null || typeof value !== 'object') return false
+  const o = value as Record<string, unknown>
+  return (
+    typeof o.id === 'string' &&
+    typeof o.title === 'string' &&
+    Array.isArray(o.authors) &&
+    o.authors.every((t) => typeof t === 'string') &&
+    typeof o.year === 'number' &&
+    typeof o.abstract === 'string' &&
+    typeof o.url === 'string' &&
+    typeof o.credibility === 'number' &&
+    (o.venue === undefined || typeof o.venue === 'string') &&
+    (o.citationCount === undefined || typeof o.citationCount === 'number')
+  )
+}
+
+function isReferencesByNoteId(
+  value: unknown
+): value is Record<string, Reference[]> {
+  if (value === null || typeof value !== 'object') return false
+  const o = value as Record<string, unknown>
+  for (const k of Object.keys(o)) {
+    const arr = o[k]
+    if (!Array.isArray(arr) || !arr.every(isReference)) return false
+  }
+  return true
+}
+
 function isPersistedV1(value: unknown): value is PersistedAppStateV1 {
   if (value === null || typeof value !== 'object') return false
   const o = value as Record<string, unknown>
@@ -54,6 +83,9 @@ function isPersistedV1(value: unknown): value is PersistedAppStateV1 {
   if ('currentNoteId' in o) {
     const c = o.currentNoteId
     if (c != null && typeof c !== 'string') return false
+  }
+  if ('referencesByNoteId' in o && o.referencesByNoteId != null) {
+    if (!isReferencesByNoteId(o.referencesByNoteId)) return false
   }
   return true
 }
@@ -74,6 +106,7 @@ export function loadPersistedState(): {
   notes: Note[]
   versionsByNoteId: Record<string, NoteVersion[]>
   currentNoteId?: string | null
+  referencesByNoteId: Record<string, Reference[]>
 } {
   let raw = localStorage.getItem(STORAGE_ROOT_KEY)
   if (raw == null) {
@@ -88,6 +121,7 @@ export function loadPersistedState(): {
             ),
             versionsByNoteId: parsed.versionsByNoteId,
             currentNoteId: parsed.currentNoteId,
+            referencesByNoteId: parsed.referencesByNoteId ?? {},
           }
           savePersistedState(state)
           localStorage.removeItem(LEGACY_STORAGE_KEY)
@@ -108,6 +142,7 @@ export function loadPersistedState(): {
           ),
           versionsByNoteId: parsed.versionsByNoteId,
           currentNoteId: parsed.currentNoteId,
+          referencesByNoteId: parsed.referencesByNoteId ?? {},
         }
       }
     } catch {
@@ -122,22 +157,25 @@ export function loadPersistedState(): {
         normalizeNoteForApp(normalizePersistedNote(n))
       ),
       versionsByNoteId: {},
+      referencesByNoteId: {},
     }
   }
 
-  return { notes: [], versionsByNoteId: {} }
+  return { notes: [], versionsByNoteId: {}, referencesByNoteId: {} }
 }
 
 export function savePersistedState(state: {
   notes: Note[]
   versionsByNoteId: Record<string, NoteVersion[]>
   currentNoteId?: string | null
+  referencesByNoteId?: Record<string, Reference[]>
 }): void {
   const payload: PersistedAppStateV1 = {
     version: 1,
     notes: state.notes,
     versionsByNoteId: state.versionsByNoteId,
     currentNoteId: state.currentNoteId,
+    referencesByNoteId: state.referencesByNoteId ?? {},
   }
   localStorage.setItem(STORAGE_ROOT_KEY, JSON.stringify(payload))
   localStorage.removeItem(LEGACY_NOTES_KEY)
@@ -145,7 +183,12 @@ export function savePersistedState(state: {
 
 /** @deprecated Use savePersistedState — kept for any external callers */
 export function saveNotes(notes: Note[]): void {
-  savePersistedState({ notes, versionsByNoteId: {}, currentNoteId: null })
+  savePersistedState({
+    notes,
+    versionsByNoteId: {},
+    currentNoteId: null,
+    referencesByNoteId: {},
+  })
 }
 
 /** @deprecated Use loadPersistedState */
@@ -254,6 +297,7 @@ export function exportStateJson(state: {
   notes: Note[]
   versionsByNoteId: Record<string, NoteVersion[]>
   currentNoteId?: string | null
+  referencesByNoteId?: Record<string, Reference[]>
 }): string {
   return JSON.stringify(
     {
@@ -261,6 +305,7 @@ export function exportStateJson(state: {
       notes: state.notes,
       versionsByNoteId: state.versionsByNoteId,
       currentNoteId: state.currentNoteId,
+      referencesByNoteId: state.referencesByNoteId ?? {},
     },
     null,
     2
@@ -274,6 +319,7 @@ export function parseImportedStateJson(
   notes: Note[]
   versionsByNoteId: Record<string, NoteVersion[]>
   currentNoteId?: string | null
+  referencesByNoteId: Record<string, Reference[]>
 } | null {
   try {
     const parsed: unknown = JSON.parse(raw)
@@ -284,6 +330,7 @@ export function parseImportedStateJson(
         ),
         versionsByNoteId: parsed.versionsByNoteId,
         currentNoteId: parsed.currentNoteId,
+        referencesByNoteId: parsed.referencesByNoteId ?? {},
       }
     }
     if (
@@ -304,6 +351,9 @@ export function parseImportedStateJson(
           : typeof c === 'string'
             ? c
             : undefined
+      const refsRaw = (loose as { referencesByNoteId?: unknown })
+        .referencesByNoteId
+      const referencesByNoteId = isReferencesByNoteId(refsRaw) ? refsRaw : {}
       return {
         notes: loose.notes.map((n) =>
           normalizeNoteForApp(normalizePersistedNote(n))
@@ -313,6 +363,7 @@ export function parseImportedStateJson(
           loose.versionsByNoteId !== null
             ? loose.versionsByNoteId
             : {},
+        referencesByNoteId,
         ...(currentNoteId !== undefined ? { currentNoteId } : {}),
       }
     }

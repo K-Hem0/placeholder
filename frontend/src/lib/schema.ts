@@ -6,7 +6,7 @@
  * - Legacy `notes` and `scholarly-notes-v1` migrated on load if present
  */
 
-import type { Note, NoteVersion } from '../types'
+import type { Note, NoteVersion, Reference } from '../types'
 
 /** Single JSON document for atomic-ish persistence */
 export type PersistedAppStateV1 = {
@@ -16,6 +16,8 @@ export type PersistedAppStateV1 = {
   versionsByNoteId: Record<string, NoteVersion[]>
   /** Optional since early v1 blobs; validated against `notes` on load */
   currentNoteId?: string | null
+  /** Saved literature references keyed by note id (optional for older blobs) */
+  referencesByNoteId?: Record<string, Reference[]>
 }
 
 export const STORAGE_ROOT_KEY = 'daftar-v1'

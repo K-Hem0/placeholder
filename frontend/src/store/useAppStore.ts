@@ -38,7 +38,7 @@ export function createEmptyNote(
 type AppState = {
   notes: Note[]
   currentNoteId: string | null
-  references: Reference[]
+  referencesByNoteId: Record<string, Reference[]>
   activeSidebarTab: SidebarTab
   versionsByNoteId: Record<string, NoteVersion[]>
   addNote: (note?: Note) => void
@@ -53,7 +53,8 @@ type AppState = {
   updateCurrentNoteTags: (tags: string[]) => void
   updateCurrentNoteFolder: (folder: string) => void
   setActiveSidebarTab: (tab: SidebarTab) => void
-  addReference: (reference: Reference) => void
+  addReference: (noteId: string | null, reference: Reference) => void
+  removeReference: (noteId: string | null, referenceId: string) => void
   pushVersionSnapshot: (
     noteId: string,
     previousContent: string,
@@ -67,7 +68,8 @@ type AppState = {
   importState: (
     notes: Note[],
     versionsByNoteId: Record<string, NoteVersion[]>,
-    currentNoteId?: string | null
+    currentNoteId?: string | null,
+    referencesByNoteId?: Record<string, Reference[]>
   ) => void
   resetAll: () => void
 }
@@ -87,7 +89,7 @@ function patchCurrentNote(
 export const useAppStore = create<AppState>((set, get) => ({
   notes: [],
   currentNoteId: null,
-  references: [],
+  referencesByNoteId: {},
   activeSidebarTab: 'literature',
   versionsByNoteId: {},
 
@@ -152,8 +154,34 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setActiveSidebarTab: (tab) => set({ activeSidebarTab: tab }),
 
-  addReference: (reference) =>
-    set((s) => ({ references: [...s.references, reference] })),
+  addReference: (noteId, reference) => {
+    if (noteId == null) return
+    set((s) => {
+      const key = noteId
+      const existing = s.referencesByNoteId[key] ?? []
+      if (existing.some((r) => r.id === reference.id)) return s
+      return {
+        referencesByNoteId: {
+          ...s.referencesByNoteId,
+          [key]: [...existing, reference],
+        },
+      }
+    })
+  },
+
+  removeReference: (noteId, referenceId) => {
+    if (noteId == null) return
+    set((s) => {
+      const key = noteId
+      const list = s.referencesByNoteId[key] ?? []
+      const next = list.filter((r) => r.id !== referenceId)
+      if (next.length === list.length) return s
+      const nextMap = { ...s.referencesByNoteId }
+      if (next.length === 0) delete nextMap[key]
+      else nextMap[key] = next
+      return { referencesByNoteId: nextMap }
+    })
+  },
 
   pushVersionSnapshot: (noteId, previousContent, nextContent, snapshotTitle) =>
     set((s) => {
@@ -228,12 +256,13 @@ export const useAppStore = create<AppState>((set, get) => ({
       }
     }),
 
-  importState: (notes, versionsByNoteId, preferredCurrentId) => {
+  importState: (notes, versionsByNoteId, preferredCurrentId, referencesByNoteId) => {
     const normalized = notes.map((n) => normalizeNoteForApp(n))
     set({
       notes: normalized,
       versionsByNoteId,
       currentNoteId: resolveCurrentNoteId(normalized, preferredCurrentId),
+      referencesByNoteId: referencesByNoteId ? { ...referencesByNoteId } : {},
     })
   },
 
@@ -241,7 +270,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({
       notes: [],
       currentNoteId: null,
-      references: [],
+      referencesByNoteId: {},
       versionsByNoteId: {},
     }),
 }))

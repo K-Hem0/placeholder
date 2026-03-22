@@ -1,4 +1,4 @@
-import { LiteratureTabPlaceholder } from '../sidebar/LiteratureTabPlaceholder'
+import { LiteratureTab } from '../sidebar/LiteratureTab'
 import { ToolsTabPlaceholder } from '../sidebar/ToolsTabPlaceholder'
 import { VersionHistoryPanel } from '../sidebar/VersionHistoryPanel'
 import { useAppStore } from '../../store'
@@ -77,7 +77,7 @@ export function Sidebar() {
           aria-labelledby="sidebar-tab-literature"
           hidden={activeTab !== 'literature'}
         >
-          <LiteratureTabPlaceholder />
+          <LiteratureTab />
         </div>
         <div
           id="sidebar-panel-tools"
