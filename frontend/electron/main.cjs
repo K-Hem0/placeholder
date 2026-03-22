@@ -3,7 +3,13 @@ const path = require('path')
 const fs = require('fs')
 
 const distPath = path.join(__dirname, '../dist/index.html')
-const isDev = !app.isPackaged && !fs.existsSync(distPath)
+const forceDev = process.argv.includes('--dev')
+const isDev =
+  forceDev || (!app.isPackaged && !fs.existsSync(distPath))
+
+if (isDev) {
+  app.commandLine.appendSwitch('disable-http-cache')
+}
 
 function createWindow() {
   const mainWindow = new BrowserWindow({

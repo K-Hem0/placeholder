@@ -23,9 +23,9 @@ const previewBodyClass =
   'notes-editor-preview max-w-none px-3 py-3 text-[12px] leading-[1.65] text-slate-800 dark:text-slate-300/95 ' +
   '[&_p]:my-3 [&_p:first-child]:mt-0 ' +
   '[&_ul]:my-3 [&_ol]:my-3 [&_li]:marker:text-slate-500 ' +
-  '[&_h1]:mb-2 [&_h1]:mt-[1.35em] [&_h1]:text-[1.25em] [&_h1]:font-semibold [&_h1]:tracking-[-0.01em] [&_h1]:leading-snug [&_h1]:first:mt-0 ' +
-  '[&_h2]:mb-1.5 [&_h2]:mt-[1.15em] [&_h2]:text-[1.125em] [&_h2]:font-semibold [&_h2]:tracking-[-0.008em] [&_h2]:leading-snug [&_h2]:first:mt-0 ' +
-  '[&_h3]:mb-1.5 [&_h3]:mt-[1em] [&_h3]:text-[1.0625em] [&_h3]:font-semibold [&_h3]:tracking-tight [&_h3]:leading-snug [&_h3]:first:mt-0 ' +
+  '[&_h1]:mb-2 [&_h1]:mt-[1.35em] [&_h1]:text-[0.9em] [&_h1]:font-semibold [&_h1]:tracking-[-0.01em] [&_h1]:leading-snug [&_h1]:first:mt-0 ' +
+  '[&_h2]:mb-1.5 [&_h2]:mt-[1.15em] [&_h2]:text-[0.8em] [&_h2]:font-semibold [&_h2]:tracking-[-0.008em] [&_h2]:leading-snug [&_h2]:first:mt-0 ' +
+  '[&_h3]:mb-1.5 [&_h3]:mt-[1em] [&_h3]:text-[0.75em] [&_h3]:font-semibold [&_h3]:tracking-tight [&_h3]:leading-snug [&_h3]:first:mt-0 ' +
   '[&_blockquote]:border-l-2 [&_blockquote]:border-slate-300/80 [&_blockquote]:pl-3 [&_blockquote]:text-slate-700 dark:[&_blockquote]:border-white/[0.12] ' +
   '[&_code]:rounded [&_code]:bg-slate-200/55 [&_code]:px-1 [&_code]:py-px [&_code]:text-[0.9em] dark:[&_code]:bg-white/[0.08] ' +
   '[&_pre]:rounded-md [&_pre]:border [&_pre]:border-slate-200/70 [&_pre]:bg-slate-100/80 [&_pre]:p-3 [&_pre]:text-[11px] dark:[&_pre]:border-white/[0.06] dark:[&_pre]:bg-[#12131a]'

@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "electron": "electron .",
-    "electron:dev": "concurrently \"vite --port 5932 --strictPort\" \"wait-on http://localhost:5932 && electron .\"",
+    "electron:dev": "concurrently \"vite --port 5932 --strictPort\" \"wait-on http://localhost:5932 && electron . --dev\"",
     "electron:build": "npm run build && electron-builder"
   },
   "build": {

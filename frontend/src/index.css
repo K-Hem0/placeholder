@@ -253,21 +253,21 @@ html:not(.dark) h6 {
 }
 
 h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
+  font-size: 38px;
+  letter-spacing: -1.14px;
   margin: 32px 0;
   @media (max-width: 1024px) {
-    font-size: 36px;
+    font-size: 24px;
     margin: 20px 0;
   }
 }
 h2 {
-  font-size: 24px;
+  font-size: 16px;
   line-height: 118%;
-  letter-spacing: -0.24px;
+  letter-spacing: -0.16px;
   margin: 0 0 8px;
   @media (max-width: 1024px) {
-    font-size: 20px;
+    font-size: 14px;
   }
 }
 p {
@@ -342,13 +342,13 @@ code {
   font-weight: 700;
 }
 .heading-1 {
-  font-size: 2.2rem !important;
+  font-size: 1.5rem !important;
 }
 .heading-2 {
-  font-size: 1.8rem !important;
+  font-size: 1.22rem !important;
 }
 .heading-3 {
-  font-size: 1.5rem !important;
+  font-size: 1.02rem !important;
 }
 /* Remove margin from paragraph wrapping headings */
 p:has(.heading) {
@@ -584,7 +584,7 @@ html:not(.dark) .latex-math-preview .katex {
 
 /* LaTeX / markdown preview — override global h1/h2; doc-appropriate sizing and spacing */
 .latex-math-preview h1 {
-  font-size: 1.5rem;
+  font-size: 1.05rem;
   font-weight: 600;
   margin: 0 0 0.625rem;
   padding-top: 0;
@@ -592,7 +592,7 @@ html:not(.dark) .latex-math-preview .katex {
   letter-spacing: normal;
 }
 .latex-math-preview h2 {
-  font-size: 1.25rem;
+  font-size: 0.9rem;
   font-weight: 600;
   margin: 1.5rem 0 0.5rem;
   padding-top: 0;
@@ -603,13 +603,13 @@ html:not(.dark) .latex-math-preview .katex {
   margin-top: 0;
 }
 .latex-math-preview h3 {
-  font-size: 1.0625rem;
+  font-size: 0.75rem;
   font-weight: 600;
   margin: 1.125rem 0 0.375rem;
   line-height: 1.4;
 }
 .latex-math-preview h4 {
-  font-size: 1rem;
+  font-size: 0.7rem;
   font-weight: 600;
   margin: 0.875rem 0 0.25rem;
   line-height: 1.4;

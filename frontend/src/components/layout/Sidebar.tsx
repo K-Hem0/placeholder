@@ -3,7 +3,6 @@ import {
   LiteratureSidebarProvider,
   SearchTab,
 } from '../sidebar/LiteratureTab'
-import { ToolsTabPlaceholder } from '../sidebar/ToolsTabPlaceholder'
 import { VersionHistoryPanel } from '../sidebar/VersionHistoryPanel'
 import { useAppStore } from '../../store'
 import type { SidebarTab } from '../../types'
@@ -21,11 +20,10 @@ const tabs: {
     title: 'AI ideas, recommendations, similar papers, and saved refs for this note',
   },
   {
-    id: 'search',
+    id: 'tools',
     label: 'Search',
     title: 'Look up papers by keyword (Semantic Scholar)',
   },
-  { id: 'tools', label: 'Tools', title: 'Utilities for this workspace' },
   { id: 'history', label: 'History', title: 'Version history for the open note' },
 ]
 
@@ -46,10 +44,11 @@ export function Sidebar() {
         <div
           className="flex min-w-0 flex-1 flex-wrap gap-x-1 gap-y-1"
           role="tablist"
-          aria-label="Right sidebar tabs: Explore note-based papers and ideas, Search papers by keyword, Tools, and this note's version history"
+          aria-label="Right sidebar tabs: Explore note-based papers and ideas, Search papers by keyword, and this note's version history"
         >
           {tabs.map(({ id, label, title }) => {
-            const selected = activeTab === id
+            const selected =
+              activeTab === id || (id === 'tools' && activeTab === 'search')
             return (
               <button
                 key={id}
@@ -99,22 +98,14 @@ export function Sidebar() {
             <ExploreTab />
           </div>
           <div
-            id="sidebar-panel-search"
+            id="sidebar-panel-tools"
             role="tabpanel"
-            aria-labelledby="sidebar-tab-search"
-            hidden={activeTab !== 'search'}
+            aria-labelledby="sidebar-tab-tools"
+            hidden={activeTab !== 'tools' && activeTab !== 'search'}
           >
             <SearchTab />
           </div>
         </LiteratureSidebarProvider>
-        <div
-          id="sidebar-panel-tools"
-          role="tabpanel"
-          aria-labelledby="sidebar-tab-tools"
-          hidden={activeTab !== 'tools'}
-        >
-          <ToolsTabPlaceholder />
-        </div>
         <div
           id="sidebar-panel-history"
           role="tabpanel"

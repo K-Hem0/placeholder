@@ -25,8 +25,6 @@ import {
   CREDIBILITY_HEURISTIC_TOOLTIP,
   estimateCredibility,
   fetchRecommendations,
-  NOTE_CONTEXT_BODY_WORDS,
-  NOTE_CONTEXT_TITLE_WORDS,
   plainNoteBodyForApi,
   referenceOpenUrl,
   searchPapers,
@@ -92,8 +90,6 @@ type LiteratureSidebarContextValue = {
   ) => void
   query: string
   setQuery: Dispatch<SetStateAction<string>>
-  useNoteContext: boolean
-  setUseNoteContext: Dispatch<SetStateAction<boolean>>
   effectiveQuery: string
   onSearch: () => void
   loading: boolean
@@ -536,7 +532,6 @@ export function LiteratureSidebarProvider({ children }: { children: ReactNode })
   )
 
   const [query, setQuery] = useState('')
-  const [useNoteContext, setUseNoteContext] = useState(true)
   const [results, setResults] = useState<SemanticScholarPaper[]>([])
   const [recs, setRecs] = useState<SemanticScholarPaper[]>([])
   const [loading, setLoading] = useState(false)
@@ -655,9 +650,9 @@ export function LiteratureSidebarProvider({ children }: { children: ReactNode })
   }, [note])
 
   const effectiveQuery = useMemo(() => {
-    if (!useNoteContext || !note) return query.trim()
+    if (!note) return query.trim()
     return buildAugmentedSearchQuery(query, note)
-  }, [query, useNoteContext, note])
+  }, [query, note])
 
   const onSearch = useCallback(async () => {
     setSearchError(null)
@@ -841,8 +836,6 @@ export function LiteratureSidebarProvider({ children }: { children: ReactNode })
     fetchPaperRelevance,
     query,
     setQuery,
-    useNoteContext,
-    setUseNoteContext,
     effectiveQuery,
     onSearch,
     loading,
@@ -1218,8 +1211,6 @@ export function SearchTab() {
     scopeLabel,
     query,
     setQuery,
-    useNoteContext,
-    setUseNoteContext,
     effectiveQuery,
     onSearch,
     loading,
@@ -1289,20 +1280,6 @@ export function SearchTab() {
             {loading ? 'Searching…' : 'Search'}
           </button>
         </div>
-        <label className="flex cursor-pointer items-center gap-2 text-[11px] text-slate-600 dark:text-slate-500/90">
-          <input
-            type="checkbox"
-            checked={useNoteContext}
-            onChange={(e) => setUseNoteContext(e.target.checked)}
-            className="rounded border-slate-300 text-sky-600"
-          />
-          <span>
-            Blend open note into <span className="font-medium">this</span> search
-            only (title ≤{NOTE_CONTEXT_TITLE_WORDS} words, body ≤
-            {NOTE_CONTEXT_BODY_WORDS}). Does not affect Recommended on the Explore
-            tab.
-          </span>
-        </label>
         {searchError ? (
           <p className={alertErrorClass} role="alert">
             <span className="font-semibold">Search failed.</span>{' '}
@@ -1341,8 +1318,7 @@ export function SearchTab() {
             </div>
           ) : (
             <p className={mutedLineClass}>
-              No matches for this search. Try other keywords or turn off blending
-              the open note.
+              No matches for this search. Try other keywords.
             </p>
           )}
         </LiteratureDisclosure>
