@@ -41,8 +41,8 @@ export function EditorPane() {
     editorMaxWidth === 'narrow'
       ? 'max-w-[32rem]'
       : editorMaxWidth === 'wide'
-        ? 'max-w-[56rem]'
-        : 'max-w-[40rem]'
+        ? 'max-w-[48rem]'
+        : 'max-w-[36rem]'
 
   const kbdHint =
     'rounded-md border border-slate-200/80 bg-slate-100/80 px-1.5 py-0.5 font-mono text-[12px] text-slate-800 dark:border-white/[0.1] dark:bg-white/[0.06] dark:text-slate-300'

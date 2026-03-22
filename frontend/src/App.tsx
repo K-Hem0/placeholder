@@ -128,7 +128,7 @@ export default function App() {
     <AppShell
       left={<NoteList />}
       editor={
-        <EditorErrorBoundary>
+        <EditorErrorBoundary key={currentNoteId ?? 'empty'}>
           <EditorPane />
         </EditorErrorBoundary>
       }

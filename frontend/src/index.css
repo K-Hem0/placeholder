@@ -409,13 +409,38 @@ p:has(.heading) {
   text-underline-offset: 2px;
 }
 
-/* Line focus: dim non-focused paragraphs */
-.notes-editor.line-focus .ProseMirror > p {
+/* Line focus: dim non-focused blocks; .line-focus-active is added by plugin to block containing cursor */
+.notes-editor.line-focus.ProseMirror > p,
+.notes-editor.line-focus.ProseMirror > blockquote,
+.notes-editor.line-focus.ProseMirror > ul,
+.notes-editor.line-focus.ProseMirror > ol,
+.notes-editor.line-focus .ProseMirror > p,
+.notes-editor.line-focus .ProseMirror > blockquote,
+.notes-editor.line-focus .ProseMirror > ul,
+.notes-editor.line-focus .ProseMirror > ol,
+.notes-editor.line-focus .ProseMirror ul > li,
+.notes-editor.line-focus.ProseMirror ul > li,
+.notes-editor.line-focus .ProseMirror ol > li,
+.notes-editor.line-focus.ProseMirror ol > li {
   opacity: 0.42;
   transition: opacity 0.18s ease;
 }
 
-.notes-editor.line-focus .ProseMirror > p:focus-within {
+/* Active block: class on block (legacy) or on ProseMirror's decoration wrapper div */
+.notes-editor.line-focus .line-focus-active,
+.notes-editor.line-focus .line-focus-active *,
+.notes-editor.line-focus.ProseMirror > p.line-focus-active,
+.notes-editor.line-focus.ProseMirror > blockquote.line-focus-active,
+.notes-editor.line-focus.ProseMirror > ul.line-focus-active,
+.notes-editor.line-focus.ProseMirror > ol.line-focus-active,
+.notes-editor.line-focus .ProseMirror > p.line-focus-active,
+.notes-editor.line-focus .ProseMirror > blockquote.line-focus-active,
+.notes-editor.line-focus .ProseMirror > ul.line-focus-active,
+.notes-editor.line-focus .ProseMirror > ol.line-focus-active,
+.notes-editor.line-focus .ProseMirror ul > li.line-focus-active,
+.notes-editor.line-focus.ProseMirror ul > li.line-focus-active,
+.notes-editor.line-focus .ProseMirror ol > li.line-focus-active,
+.notes-editor.line-focus.ProseMirror ol > li.line-focus-active {
   opacity: 1;
 }
 

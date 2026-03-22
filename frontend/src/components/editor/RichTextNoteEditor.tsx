@@ -29,8 +29,8 @@ const EDITOR_BODY_BASE =
 
 function maxWidthClass(w: 'narrow' | 'medium' | 'wide') {
   if (w === 'narrow') return 'max-w-[32rem]'
-  if (w === 'wide') return 'max-w-[56rem]'
-  return 'max-w-[40rem]'
+  if (w === 'wide') return 'max-w-[48rem]'
+  return 'max-w-[36rem]'
 }
 
 type RichTextNoteEditorProps = {

@@ -122,10 +122,6 @@ function AppearanceSection() {
   const setTheme = useSettingsStore((s) => s.setThemePreference)
   const colorScheme = useSettingsStore((s) => s.colorScheme)
   const setColorScheme = useSettingsStore((s) => s.setColorScheme)
-  const compactMode = useSettingsStore((s) => s.compactMode)
-  const setCompact = useSettingsStore((s) => s.setCompactMode)
-  const editorMaxWidth = useSettingsStore((s) => s.editorMaxWidth)
-  const setMaxW = useSettingsStore((s) => s.setEditorMaxWidth)
 
   return (
     <section className="space-y-4">
@@ -163,16 +159,23 @@ function AppearanceSection() {
             searchable
           />
         </Row>
-        <Row
-          label="Compact mode"
-          description="Tighter spacing in lists and panels."
-        >
-          <Toggle
-            pressed={compactMode}
-            onPressedChange={setCompact}
-            ariaLabel="Compact mode"
-          />
-        </Row>
+      </div>
+    </section>
+  )
+}
+
+function EditorSection() {
+  const lineFocus = useSettingsStore((s) => s.lineFocus)
+  const setLineFocus = useSettingsStore((s) => s.setLineFocus)
+  const distractionFree = useSettingsStore((s) => s.distractionFree)
+  const setDf = useSettingsStore((s) => s.setDistractionFreeWithTransition)
+  const editorMaxWidth = useSettingsStore((s) => s.editorMaxWidth)
+  const setMaxW = useSettingsStore((s) => s.setEditorMaxWidth)
+
+  return (
+    <section className="space-y-4">
+      <SectionTitle>Editor</SectionTitle>
+      <div className="space-y-4 rounded-xl border border-slate-200/60 bg-white/50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
         <Row
           label="Editor width"
           description="How wide the writing column should be."
@@ -189,21 +192,6 @@ function AppearanceSection() {
             variant="settings"
           />
         </Row>
-      </div>
-    </section>
-  )
-}
-
-function EditorSection() {
-  const lineFocus = useSettingsStore((s) => s.lineFocus)
-  const setLineFocus = useSettingsStore((s) => s.setLineFocus)
-  const distractionFree = useSettingsStore((s) => s.distractionFree)
-  const setDf = useSettingsStore((s) => s.setDistractionFreeWithTransition)
-
-  return (
-    <section className="space-y-4">
-      <SectionTitle>Editor</SectionTitle>
-      <div className="space-y-4 rounded-xl border border-slate-200/60 bg-white/50 p-4 dark:border-white/[0.05] dark:bg-white/[0.02]">
         <Row
           label="Line focus"
           description="Dim surrounding paragraphs while you type."

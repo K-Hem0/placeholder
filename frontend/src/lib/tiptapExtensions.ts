@@ -1,5 +1,6 @@
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
+import { LineFocusExtension } from './lineFocusExtension'
 import Placeholder from '@tiptap/extension-placeholder'
 import { TextStyleKit } from '@tiptap/extension-text-style/text-style-kit'
 import { Mathematics } from '@tiptap/extension-mathematics'
@@ -51,5 +52,6 @@ export function createEditorExtensions() {
     WikiLinkSuggestionExtension,
     SlashCommandExtension,
     LinkKeyboardShortcut,
+    LineFocusExtension,
   ]
 }
