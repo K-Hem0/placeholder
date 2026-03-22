@@ -1,4 +1,14 @@
 /**
+ * Strips wiki link spans to plain text (legacy content after link feature removal).
+ */
+export function stripWikiLinks(html: string): string {
+  return html.replace(
+    /<span[^>]*data-wiki-link[^>]*>([\s\S]*?)<\/span>/gi,
+    (_, inner) => inner
+  )
+}
+
+/**
  * Converts block headings (h1–h6) to inline span.heading for Notion-style flow.
  * Use when loading content into the editor so legacy h1/h2/h3 parse correctly.
  */

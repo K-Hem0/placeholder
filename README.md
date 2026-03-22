@@ -163,7 +163,7 @@ Implementation is split into **3 parts** for parallel work by teammates.
 - **1.1** — Project setup (Electron/Tauri + React/Vue/Svelte), build pipeline → `npm install` + dev script works
 - **1.2** — Storage for notes (JSON, SQLite, IndexedDB) with CRUD → Notes persist across sessions
 - **1.3** — Block-based editor (TipTap, Lexical, Slate, etc.) with basic formatting → Editor saves to storage
-- **1.4** — Internal links `[[note name]]` and backlinks → Notes link; backlinks visible
+- **1.4** — ~~Links `[[note name]]` and backlinks~~ (removed)
 - **1.5** — Tags and folders → Notes organizable
 - **1.6** — Layout: editor + collapsible sidebar with tab placeholders → Shell ready for Parts 2 & 3
 - **1.7** — Templates (literature note, research log) → 2–3 templates usable

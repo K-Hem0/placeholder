@@ -30,39 +30,17 @@ export const SLASH_ITEMS: SlashMenuItem[] = [
       editor.chain().focus().setParagraph().run()
     },
   },
-  {
-    id: 'h1',
-    label: 'Heading 1',
-    group: 'Basic',
-    keywords: ['title', 'h1', 'heading'],
-    run: (editor, range) => {
+  ...([1, 2, 3] as const).map((level) => ({
+    id: `h${level}` as const,
+    label: `Heading ${level}`,
+    group: 'Basic' as const,
+    keywords: level === 1 ? ['title', 'h1', 'heading'] : level === 2 ? ['subtitle', 'h2'] : ['h3'],
+    run: (editor: Editor, range: Range) => {
       editor.chain().focus().deleteRange(range).run()
       clearBlockModes(editor)
-      editor.chain().focus().setInlineHeading(1).run()
+      editor.chain().focus().setMark('inlineHeading', { level }).run()
     },
-  },
-  {
-    id: 'h2',
-    label: 'Heading 2',
-    group: 'Basic',
-    keywords: ['subtitle', 'h2'],
-    run: (editor, range) => {
-      editor.chain().focus().deleteRange(range).run()
-      clearBlockModes(editor)
-      editor.chain().focus().setInlineHeading(2).run()
-    },
-  },
-  {
-    id: 'h3',
-    label: 'Heading 3',
-    group: 'Basic',
-    keywords: ['h3'],
-    run: (editor, range) => {
-      editor.chain().focus().deleteRange(range).run()
-      clearBlockModes(editor)
-      editor.chain().focus().setInlineHeading(3).run()
-    },
-  },
+  })),
   {
     id: 'bullet',
     label: 'Bullet List',

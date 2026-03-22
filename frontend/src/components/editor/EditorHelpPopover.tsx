@@ -100,15 +100,6 @@ export function EditorHelpPopover({ variant = 'default' }: EditorHelpPopoverProp
                 </div>
 
                 <div className="max-h-[min(65dvh,520px)] space-y-6 overflow-y-auto pr-1 text-[13px] leading-relaxed text-slate-700 dark:text-slate-400/95">
-                  <HelpBlock title="Internal links">
-                    <p>
-                      Type{' '}
-                      <kbd className="rounded border border-slate-200/80 bg-slate-100/80 px-1.5 py-0.5 font-mono text-[12px] text-slate-800 dark:border-white/[0.1] dark:bg-white/[0.06] dark:text-slate-300">
-                        [[note name]]
-                      </kbd>{' '}
-                      to link to another note by title.
-                    </p>
-                  </HelpBlock>
                   <HelpBlock title="Slash commands">
                     <p>
                       Type{' '}

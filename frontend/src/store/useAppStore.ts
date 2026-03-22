@@ -16,7 +16,6 @@ import {
   latexMarkdownToHtml,
   looksLikeLatexOrMarkdown,
 } from '../lib/latexToHtml'
-import { findNoteIdByTitle } from '../lib/wikiLinks'
 
 export function createEmptyNote(
   template: NoteTemplateId = 'blank',
@@ -66,8 +65,6 @@ type AppState = {
     snapshotTitle?: string
   ) => void
   addNoteFromTitle: (title: string) => void
-  /** Ensure a note exists for this wiki title; does not change the active note. Returns null if title is empty/invalid. */
-  ensureNoteForWikiTitle: (title: string) => string | null
   restoreNoteVersion: (noteId: string, versionId: string) => void | Promise<void>
   importState: (
     notes: Note[],
@@ -225,19 +222,6 @@ export const useAppStore = create<AppState>((set, get) => ({
       notes: [...s.notes, note],
       currentNoteId: note.id,
     }))
-  },
-
-  ensureNoteForWikiTitle: (title) => {
-    const trimmed = title.trim()
-    if (!trimmed) return null
-    const notes = get().notes
-    const list = notes.map((n) => ({ id: n.id, title: n.title }))
-    const existing = findNoteIdByTitle(list, trimmed)
-    if (existing) return existing
-    const n = createEmptyNote('blank')
-    const note = normalizeNoteForApp({ ...n, title: trimmed })
-    set((s) => ({ notes: [...s.notes, note] }))
-    return note.id
   },
 
   restoreNoteVersion: async (noteId, versionId) => {

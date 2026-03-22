@@ -392,21 +392,145 @@ p:has(.heading) {
   color: rgb(100 116 139 / 0.85);
 }
 
-/* Internal wiki links: unresolved targets */
-.notes-editor .wiki-link.wiki-link--unresolved {
-  text-decoration-style: dashed;
-  color: rgb(100 116 139);
-  text-decoration-color: rgb(148 163 184 / 0.55);
-}
-.dark .notes-editor .wiki-link.wiki-link--unresolved {
-  color: rgb(148 163 184 / 0.85);
-  text-decoration-color: rgb(100 116 139 / 0.45);
-}
-
 .notes-editor-preview a {
   color: inherit;
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+/* Code block — override global code styles; proper block layout and whitespace */
+.notes-editor pre {
+  overflow-x: auto;
+  white-space: pre;
+}
+.notes-editor pre code {
+  display: block;
+  white-space: pre;
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+  border-radius: 0;
+}
+/* Base color for code block text (pre sets color; spans override with token colors) */
+.notes-editor pre code {
+  font-family: var(--mono);
+}
+.notes-editor pre code .hljs-keyword,
+.notes-editor pre code .hljs-selector-tag,
+.notes-editor pre code .hljs-meta .hljs-keyword,
+.notes-editor pre code .hljs-doctag,
+.notes-editor pre code .hljs-template-tag,
+.notes-editor pre code .hljs-template-variable,
+.notes-editor pre code .hljs-type,
+.notes-editor pre code .hljs-variable.language_ {
+  color: #d73a49 !important;
+}
+.dark .notes-editor pre code .hljs-keyword,
+.dark .notes-editor pre code .hljs-selector-tag,
+.dark .notes-editor pre code .hljs-meta .hljs-keyword,
+.dark .notes-editor pre code .hljs-doctag,
+.dark .notes-editor pre code .hljs-template-tag,
+.dark .notes-editor pre code .hljs-template-variable,
+.dark .notes-editor pre code .hljs-type,
+.dark .notes-editor pre code .hljs-variable.language_ {
+  color: #ff7b72 !important;
+}
+.notes-editor pre code .hljs-title,
+.notes-editor pre code .hljs-title.class_,
+.notes-editor pre code .hljs-title.function_ {
+  color: #6f42c1 !important;
+}
+.dark .notes-editor pre code .hljs-title,
+.dark .notes-editor pre code .hljs-title.class_,
+.dark .notes-editor pre code .hljs-title.function_ {
+  color: #d2a8ff !important;
+}
+.notes-editor pre code .hljs-string,
+.notes-editor pre code .hljs-meta .hljs-string,
+.notes-editor pre code .hljs-regexp {
+  color: #032f62 !important;
+}
+.dark .notes-editor pre code .hljs-string,
+.dark .notes-editor pre code .hljs-meta .hljs-string,
+.dark .notes-editor pre code .hljs-regexp {
+  color: #a5d6ff !important;
+}
+.notes-editor pre code .hljs-number,
+.notes-editor pre code .hljs-literal,
+.notes-editor pre code .hljs-attr,
+.notes-editor pre code .hljs-variable,
+.notes-editor pre code .hljs-template-variable,
+.notes-editor pre code .hljs-attribute {
+  color: #005cc5 !important;
+}
+.dark .notes-editor pre code .hljs-number,
+.dark .notes-editor pre code .hljs-literal,
+.dark .notes-editor pre code .hljs-attr,
+.dark .notes-editor pre code .hljs-variable,
+.dark .notes-editor pre code .hljs-template-variable,
+.dark .notes-editor pre code .hljs-attribute {
+  color: #79c0ff !important;
+}
+.notes-editor pre code .hljs-comment,
+.notes-editor pre code .hljs-code,
+.notes-editor pre code .hljs-formula {
+  color: #6a737d !important;
+}
+.dark .notes-editor pre code .hljs-comment,
+.dark .notes-editor pre code .hljs-code,
+.dark .notes-editor pre code .hljs-formula {
+  color: #8b949e !important;
+}
+.notes-editor pre code .hljs-built_in,
+.notes-editor pre code .hljs-symbol {
+  color: #e36209 !important;
+}
+.dark .notes-editor pre code .hljs-built_in,
+.dark .notes-editor pre code .hljs-symbol {
+  color: #ffa657 !important;
+}
+
+/* HTML/XML: tag, tag name, attribute names */
+.notes-editor pre code .hljs-tag {
+  color: #22863a !important;
+}
+.dark .notes-editor pre code .hljs-tag {
+  color: #7ee787 !important;
+}
+.notes-editor pre code .hljs-name {
+  color: #6f42c1 !important;
+}
+.dark .notes-editor pre code .hljs-name {
+  color: #d2a8ff !important;
+}
+
+/* Additional token types (meta, params, punctuation, diff) */
+.notes-editor pre code .hljs-meta,
+.notes-editor pre code .hljs-params {
+  color: #6a737d !important;
+}
+.dark .notes-editor pre code .hljs-meta,
+.dark .notes-editor pre code .hljs-params {
+  color: #8b949e !important;
+}
+.notes-editor pre code .hljs-punctuation {
+  color: #24292e !important;
+}
+.dark .notes-editor pre code .hljs-punctuation {
+  color: #c9d1d9 !important;
+}
+.notes-editor pre code .hljs-addition {
+  color: #22863a !important;
+}
+.dark .notes-editor pre code .hljs-addition {
+  color: #56d364 !important;
+}
+.notes-editor pre code .hljs-deletion {
+  color: #b31d28 !important;
+}
+.dark .notes-editor pre code .hljs-deletion {
+  color: #f85149 !important;
 }
 
 /* Line focus: dim non-focused blocks; .line-focus-active is added by plugin to block containing cursor */

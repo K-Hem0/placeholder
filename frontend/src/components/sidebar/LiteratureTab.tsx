@@ -73,7 +73,7 @@ type LiteratureSidebarContextValue = {
   noteRecError: string | null
   noteRecSkipped: boolean
   noteRecEmpty: boolean
-  recommendationQuery: string
+  recommendationQuery: string | null
   recommendedDefaultOpen: boolean
   similarSectionVisible: boolean
   similarDefaultOpen: boolean

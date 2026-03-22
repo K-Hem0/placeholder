@@ -1,12 +1,25 @@
 import StarterKit from '@tiptap/starter-kit'
+import CodeBlock from '@tiptap/extension-code-block'
+import { createLowlight, common } from 'lowlight'
+import { createCodeBlockLowlightFixedExtension } from './codeBlockLowlightFixed'
+
+const lowlight = createLowlight(common)
+lowlight.registerAlias({
+  javascript: ['js', 'jsx', 'mjs', 'cjs'],
+  typescript: ['ts', 'tsx'],
+  python: ['py', 'py3'],
+  yaml: ['yml'],
+  graphql: ['gql'],
+  markdown: ['md'],
+  shell: ['sh', 'bash', 'zsh'],
+  xml: ['html', 'xhtml', 'svg'],
+})
 import TextAlign from '@tiptap/extension-text-align'
 import { LineFocusExtension } from './lineFocusExtension'
 import Placeholder from '@tiptap/extension-placeholder'
 import { TextStyleKit } from '@tiptap/extension-text-style/text-style-kit'
 import { Mathematics } from '@tiptap/extension-mathematics'
-import { WikiLink } from './wikiLinkExtension'
 import { SlashCommandExtension } from './slashCommandExtension'
-import { WikiLinkSuggestionExtension } from './wikiLinkSuggestionExtension'
 import { LinkKeyboardShortcut } from './tiptapLinkShortcut'
 import { HashtagHeadingExtension } from './hashtagHeadingExtension'
 import { InlineHeadingExtension } from './inlineHeadingExtension'
@@ -17,6 +30,7 @@ export function createEditorExtensions() {
   return [
     StarterKit.configure({
       heading: false,
+      codeBlock: false,
       link: {
         openOnClick: false,
         autolink: true,
@@ -26,6 +40,14 @@ export function createEditorExtensions() {
         },
       },
     }),
+    CodeBlock.configure({
+      defaultLanguage: null,
+      enableTabIndentation: true,
+      HTMLAttributes: {
+        class: 'hljs',
+      },
+    }),
+    createCodeBlockLowlightFixedExtension({ lowlight, defaultLanguage: null }),
     TextStyleKit.configure({
       backgroundColor: false,
       color: false,
@@ -48,8 +70,6 @@ export function createEditorExtensions() {
     SimpleInlineMathInputRule,
     InlineHeadingExtension,
     HashtagHeadingExtension,
-    WikiLink,
-    WikiLinkSuggestionExtension,
     SlashCommandExtension,
     LinkKeyboardShortcut,
     LineFocusExtension,

@@ -5,9 +5,11 @@ import { useUiStore } from '../../store/useUiStore'
 import { createEditorExtensions } from '../../lib/tiptapExtensions'
 import { EditorContextMenu } from './EditorContextMenu'
 import { EditorMinibar } from './EditorMinibar'
-import { findNoteIdByTitle } from '../../lib/wikiLinks'
 import { latexMarkdownToHtml } from '../../lib/latexToHtml'
-import { transformBlockHeadingsToInline } from '../../lib/transformBlockHeadingsToInline'
+import {
+  stripWikiLinks,
+  transformBlockHeadingsToInline,
+} from '../../lib/transformBlockHeadingsToInline'
 import { useSettingsStore } from '../../store/useSettingsStore'
 import { cn } from '../../lib/cn'
 import { registerEditorForShortcuts } from '../../lib/editorShortcutBridge'
@@ -41,12 +43,6 @@ export function RichTextNoteEditor({ noteId }: RichTextNoteEditorProps) {
   const notes = useAppStore((s) => s.notes)
   const currentNoteId = useAppStore((s) => s.currentNoteId)
   const updateCurrentNoteContent = useAppStore((s) => s.updateCurrentNoteContent)
-  const setCurrentNoteId = useAppStore((s) => s.setCurrentNoteId)
-  const ensureNoteForWikiTitle = useAppStore((s) => s.ensureNoteForWikiTitle)
-  const notesTitleSig = useAppStore((s) =>
-    s.notes.map((n) => `${n.id}:${n.title}`).join('\0')
-  )
-
   const editorMaxWidth = useSettingsStore((s) => s.editorMaxWidth)
   const lineFocus = useSettingsStore((s) => s.lineFocus)
   const compactMode = useSettingsStore((s) => s.compactMode)
@@ -92,6 +88,29 @@ export function RichTextNoteEditor({ noteId }: RichTextNoteEditorProps) {
   useEffect(() => {
     registerEditorForShortcuts(editor)
     return () => registerEditorForShortcuts(null)
+  }, [editor])
+
+  // Capture Enter in code blocks before any other handler: insert newline only, no auto-indent
+  useEffect(() => {
+    if (!editor) return
+    const handler = (e: KeyboardEvent) => {
+      const view = editor.view
+      if (!view?.dom) return
+      if (!view.dom.contains(e.target as Node)) return
+      if (e.key !== 'Enter') return
+      const { state } = view
+      const { $from, empty } = state.selection
+      if (!empty || $from.parent.type.name !== 'codeBlock') return
+      const isAtEnd = $from.parentOffset === $from.parent.nodeSize - 2
+      const endsWithDoubleNewline = $from.parent.textContent.endsWith('\n\n')
+      if (isAtEnd && endsWithDoubleNewline) return
+      e.preventDefault()
+      e.stopPropagation()
+      const tr = state.tr.insertText('\n')
+      view.dispatch(tr.scrollIntoView())
+    }
+    document.addEventListener('keydown', handler, { capture: true })
+    return () => document.removeEventListener('keydown', handler, { capture: true })
   }, [editor])
 
   useEffect(() => {
@@ -167,7 +186,7 @@ export function RichTextNoteEditor({ noteId }: RichTextNoteEditorProps) {
       return
     }
     try {
-      html = transformBlockHeadingsToInline(raw)
+      html = stripWikiLinks(transformBlockHeadingsToInline(raw))
     } catch {
       html = '<p></p>'
     }
@@ -205,42 +224,6 @@ export function RichTextNoteEditor({ noteId }: RichTextNoteEditorProps) {
     return () => cancelAnimationFrame(id)
   }, [focusToken, editor])
 
-  useEffect(() => {
-    if (!editor) return
-    const syncWikiResolved = () => {
-      const list = useAppStore.getState().notes.map((x) => ({
-        id: x.id,
-        title: x.title,
-      }))
-      const root = editor.view.dom as HTMLElement
-      root.querySelectorAll('[data-wiki-link]').forEach((el) => {
-        if (!(el instanceof HTMLElement)) return
-        const title = el.getAttribute('data-wiki-title')?.trim()
-        if (!title) return
-        const resolved = findNoteIdByTitle(list, title) != null
-        el.classList.toggle('wiki-link--unresolved', !resolved)
-      })
-    }
-    syncWikiResolved()
-    editor.on('update', syncWikiResolved)
-    return () => {
-      editor.off('update', syncWikiResolved)
-    }
-  }, [editor, notesTitleSig])
-
-  const onWikiClick = useCallback(
-    (e: React.MouseEvent) => {
-      const el = (e.target as HTMLElement).closest('[data-wiki-link]')
-      if (!el) return
-      const title = el.getAttribute('data-wiki-title')?.trim()
-      if (!title) return
-      e.preventDefault()
-      const id = ensureNoteForWikiTitle(title)
-      if (id) setCurrentNoteId(id)
-    },
-    [ensureNoteForWikiTitle, setCurrentNoteId]
-  )
-
   const [contextMenuPos, setContextMenuPos] = useState<{
     x: number
     y: number
@@ -262,7 +245,6 @@ export function RichTextNoteEditor({ noteId }: RichTextNoteEditorProps) {
       if (!editor.isEditable) return
 
       const target = e.target as HTMLElement
-      if (target.closest('[data-wiki-link]')) return
       if (target.closest('input, textarea, button, select')) return
 
       const view = editor.view
@@ -350,7 +332,6 @@ export function RichTextNoteEditor({ noteId }: RichTextNoteEditorProps) {
               role="presentation"
               className="flex min-h-0 min-w-0 flex-1 flex-col pt-3"
               onMouseDown={onEditorCanvasMouseDown}
-              onClick={onWikiClick}
               onContextMenu={onContextMenu}
             >
               <EditorContent
